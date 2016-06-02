@@ -32,9 +32,9 @@ func init() {
 	log.Printf("Database Container Address: %s", dbAddress)
 
 	settings := postgresql.ConnectionURL{
-		Database: `financy`,
+		Database: `cc-users`,
 		Host:     dbAddress,
-		User:     `mazing`,
+		User:     `cc`,
 		Password: `pass`,
 	}
 
@@ -46,15 +46,5 @@ func init() {
 		log.Fatal("Session Open(): ", err)
 	}
 
-	chargeSource = sess.Collection("charges")
-
 	userSource = sess.Collection("users")
-
-	categorySource = sess.Collection("category")
-
-	accountSource = sess.Collection("account")
-
-	sessionSource = sess.Collection("sessions")
-
-	plannedSource = sess.Collection("planned_charges")
 }
