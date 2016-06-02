@@ -1,0 +1,46 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+module:testrunner
+module:jobs
+
+POST    /user                                  Users.Add
+POST    /user/login                            Users.Login
+GET     /user/logout                           Users.Logout
+GET     /user/samples                          Users.SampleUser
+
+GET     /charges                               Charges.List
+GET     /charges/day                           Charges.ListDated
+POST    /charges                               Charges.Add
+GET     /charges/id                            Charges.Get
+PUT     /charges                               Charges.Update
+DELETE  /charges                               Charges.Delete
+GET     /charges/planned                       Charges.ListPlanned
+GET     /charges/planned/next                  Charges.ListPlannedNext
+POST    /charges/planned                       Charges.AddPlanned
+DELETE  /charges/planned                       Charges.DeletePlanned
+
+
+GET     /categories                            Category.List
+GET     /categories/pie                        Category.ListPie
+POST    /categories                            Category.Add
+PUT     /categories                            Category.Update
+DELETE  /categories                            Category.Delete
+
+GET     /accounts                              Account.List
+POST    /accounts                              Account.Add
+PUT     /accounts                              Account.Update
+DELETE  /accounts                              Account.Delete
+
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/*filepath                       Static.Serve("public")
+
+OPTIONS /* App.CORS
+
+# Catch all
+*       /:controller/:action                    :controller.:action

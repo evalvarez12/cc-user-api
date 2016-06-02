@@ -1,0 +1,10 @@
+#Generated code
+app/routes
+app/tmp
+
+#Dependencies
+#app/vendor
+
+#Container volume
+data
+
