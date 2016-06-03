@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"encoding/json"
-	"financy/api/app/ds"
-	"financy/api/app/models"
-	"financy/api/app/services"
-	"financy/api/app/jobs"
+	"github.com/evalvarez12/cc-user-api/app/ds"
+	"github.com/evalvarez12/cc-user-api/app/models"
 	"github.com/revel/revel"
+	"encoding/json"
 	"io/ioutil"
 )
 
@@ -60,54 +58,10 @@ func (c Users) Add() revel.Result {
 		errors := c.Validation.ErrorMap()
 		return c.ErrorData(errors)
 	}
-	newUser.NewFill()
 
 	id, err := ds.UserAdd(newUser)
 	if err != nil {
 		return c.Error(err)
 	}
-	err = categorySamples(id)
-	if err != nil {
-		return c.Error(err)
-	}
-
-	err = services.SendMail(newUser.Email, newUser.Name)
-	if err != nil {
-		return c.Error(err)
-	}
-
 	return c.OK()
-}
-
-func (c Users) SampleUser(n uint) revel.Result {
-	user := models.GenerateUser()
-	userID, err := ds.UserAdd(user)
-	if err != nil {
-		return c.Error(err)
-	}
-
-	err = categorySamples(userID)
-	if err != nil {
-		return c.Error(err)
-	}
-
-	err = accountSamples(userID)
-	if err != nil {
-		return c.Error(err)
-	}
-
-	if n == 0 {
-		n = 100
-	}
-	err = chargesSamples(n, userID)
-	if err != nil {
-		return c.Error(err)
-	}
-	err = plannedSamples(userID)
-	if err != nil {
-		return c.Error(err)
-	}
-
-	return c.OK()
-
 }

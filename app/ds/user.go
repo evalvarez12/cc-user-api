@@ -3,9 +3,8 @@ package ds
 import (
 	"crypto/rand"
 	"errors"
-	"financy/api/app/models"
+	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
-	"upper.io/db.v2"
 )
 
 func UserAdd(user models.User) (userID uint, err error) {
@@ -21,7 +20,7 @@ func UserAdd(user models.User) (userID uint, err error) {
 
 func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err error) {
 	var user models.User
-	err = userSource.Find("name", logRequest.Name).One(&user)
+	err = userSource.Find("first_name", logRequest.Name).One(&user)
 	if err != nil {
 		err = errors.New("Incorrect Password or UserName")
 		return
@@ -37,19 +36,61 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 		return
 	}
 
+	sToken, err := token.SignedString([]byte("ccsignature"))
+	if err != nil {
+		return
+	}
+	user.AddJTI(token.Claims["jti"].(string))
+
+	err = userSource.Find("user_id", userID).Update(user)
+	if err != nil {
+		return
+	}
+
 	login = map[string]interface{}{
-		"name":  user.Name,
+		"name":  user.FirstName,
 		"email": user.Email,
-		"token": token,
+		"token": sToken,
 	}
 	return
 }
 
-func UserLogout(userID uint) (err error) {
-	
-	err = sessionSource.Find("user_id", userID).Delete()
+func UserLogout(userID uint, jti string) (err error) {
+	var user models.User
+	err = userSource.Find("user_id", userID).One(&user)
+	if err != nil {
+		err = errors.New("Incorrect Password or UserName")
+		return
+	}
+
+	user.RemoveJTI(jti)
+
+	err = userSource.Find("user_id", userID).Update(user)
+	if err != nil {
+		return
+	}
+
 	return
 }
+
+func UserLogoutAll(userID uint, jti string) (err error) {
+	var user models.User
+	err = userSource.Find("user_id", userID).One(&user)
+	if err != nil {
+		err = errors.New("Incorrect Password or UserName")
+		return
+	}
+
+	user.ClearAllJTI()
+
+	err = userSource.Find("user_id", userID).Update(user)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 
 func hashPassword(user *models.User) {
 	b := make([]byte, 10)

@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"financy/api/app/ds"
+	"github.com/evalvarez12/cc-user-api/app/ds"
 	"github.com/revel/revel"
 )
 

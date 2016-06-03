@@ -4,6 +4,8 @@ import (
     "github.com/dgrijalva/jwt-go"
     "time"
     "crypto/rand"
+    "github.com/evalvarez12/cc-user-api/app/models"
+    "fmt"
 )
 
 var (
@@ -23,26 +25,27 @@ func randString(size uint) string {
 	return string(buf)
 }
 
-func newToken(userID uint) (sToken string, err error) {
-    token := jwt.New(jwt.SigningMethodHS256)
+func newToken(userID uint) (token *jwt.Token, err error) {
+    token = jwt.New(jwt.SigningMethodHS256)
     token.Claims["id"] = userID
     token.Claims["iat"] = time.Now().Unix()
     token.Claims["exp"] = time.Now().Add(time.Second * 3600 * 24 * 14).Unix()
     token.Claims["jti"] = randString(5)
-    sToken, err = token.SignedString([]byte("ccsignature"))
     return
 }
 
 
 func validateToken(sToken string, user models.User) (pass bool, err error) {
-    token, err := jwt.Parse(sToken, "ccsignature")
-    if err != nil {
-        return
+    token, err := jwt.Parse(sToken, func(token *jwt.Token) (interface{}, error) {
+    // Don't forget to validate the alg is what you expect:
+    if _, ok := token.Method.(jwt.SigningMethodHS256); !ok {
+        return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
     }
-    if user.ContainsJTI(token.Claims["jti"]) {
+    return myLookupKey("ccsignature"), nil
+    })
+
+    if err == nil && token.Valid {
         pass = true
-    } else {
-        err = jwt.ErrNoTokenInRequest
     }
     return
 }

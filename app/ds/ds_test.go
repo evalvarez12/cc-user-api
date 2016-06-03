@@ -1,7 +1,7 @@
 package ds
 
 import (
-	"financy/api/app/models"
+	"github.com/evalvarez12/cc-user-api/app/models"
 	"log"
 	"testing"
 )

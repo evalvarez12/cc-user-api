@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/revel/revel"
-	"time"
 )
 
 type User struct {
@@ -23,8 +22,10 @@ type UserLogin struct {
 }
 
 func (user *User) Validate(v *revel.Validation) {
-	v.Required(user.Name)
-	v.MinSize(user.Name, 4)
+	v.Required(user.FirstName)
+	v.MinSize(user.FirstName, 4)
+	v.Required(user.LastName)
+	v.MinSize(user.LastName, 4)
 	v.Required(user.Password)
 	v.MinSize(user.Password, 4)
 	v.Required(user.Email)
@@ -63,14 +64,14 @@ func (u *User) AddJTI(jti string) {
 	}
 }
 
-func (u *User) ClearJTI() {
+func (u *User) ClearAllJTI() {
 	u.ValidJTI = []string{}
 }
 
 func (u *User) RemoveJTI(jti string) {
-	for _, i := range u.ValidJTI {
+	for j, i := range u.ValidJTI {
 		if i == jti {
-			append(u.ValidJTI[:i], u.ValidJTI[i+1:]...)
+			u.ValidJTI = append(u.ValidJTI[:j], u.ValidJTI[j+1:]...)
 			break
 		}
 	}
