@@ -22,11 +22,6 @@ type UserLogin struct {
 	Password string `json:"password"`
 }
 
-// type Session struct {
-// 	UserID uint   `db:"user_id"`
-// 	Token  string `db:"token"`
-// }
-
 func (user *User) Validate(v *revel.Validation) {
 	v.Required(user.Name)
 	v.MinSize(user.Name, 4)

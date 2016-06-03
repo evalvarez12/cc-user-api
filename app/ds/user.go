@@ -8,17 +8,6 @@ import (
 	"upper.io/db.v2"
 )
 
-func GetSession(token string) (userID uint, err error) {
-	var sess models.Session
-	err = sessionSource.Find("token", token).One(&sess)
-	if err != nil {
-		err = errors.New("Non existent session")
-		return
-	}
-	userID = sess.UserID
-	return
-}
-
 func UserAdd(user models.User) (userID uint, err error) {
 	hashPassword(&user)
 
@@ -27,15 +16,6 @@ func UserAdd(user models.User) (userID uint, err error) {
 		return
 	}
 	userID = uint(temp.(int64))
-	defaultAcc := models.DefaultAccount()
-	defaultAcc.UserID = userID
-	id, err := AccountsAdd(defaultAcc)
-	if err != nil {
-		err = errors.New("Error setting up default account")
-		return
-	}
-	user.DefaultAccount = id
-	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
 }
 
@@ -52,14 +32,7 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 		err = errors.New("Incorrect Password or UserName")
 		return
 	}
-	token := createToken(10)
-
-	userSession := models.Session{
-		UserID: user.UserID,
-		Token:  token,
-	}
-
-	_, err = sessionSource.Insert(userSession)
+	token, err := newToken(user.UserID)
 	if err != nil {
 		return
 	}
@@ -67,13 +40,13 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 	login = map[string]interface{}{
 		"name":  user.Name,
 		"email": user.Email,
-		"default-account": user.DefaultAccount,
 		"token": token,
 	}
 	return
 }
 
 func UserLogout(userID uint) (err error) {
+	
 	err = sessionSource.Find("user_id", userID).Delete()
 	return
 }

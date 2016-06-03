@@ -62,8 +62,11 @@ func (c App) Data(data interface{}) revel.Result {
 	})
 }
 
-func (c App) GetSession() (userID uint, err error) {
-	token := c.Request.Header.Get("X-Auth-Token")
-	userID, err = ds.GetSession(token)
-	return
+func (c App) GetSession() (uint, error) {
+	sToken := c.Request.Header.Get("X-Auth-Token")
+	token, err := jwt.Parse(sToken, "ccsignature")
+	if err == nil && token.Valid {
+		return token.Claims["user_id"], nil
+	}
+	return 0, jwt.ErrNoTokenInRequest
 }

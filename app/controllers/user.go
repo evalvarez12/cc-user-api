@@ -29,10 +29,6 @@ func (c Users) Login() revel.Result {
 		return c.Error(err)
 	}
 
-	// ExchangeRates are included here
-	login["exchange-rates"] = jobs.ExchangeRates
-
-
 	return c.Data(login)
 }
 
