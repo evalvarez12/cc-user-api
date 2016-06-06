@@ -2,4 +2,4 @@
 
 
 # Execute server test
-revel run cc/users_api
+revel run github.com/evalvarez12/cc-user-api

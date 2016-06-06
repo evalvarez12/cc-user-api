@@ -3,16 +3,14 @@ package ds
 import (
     "github.com/dgrijalva/jwt-go"
     "time"
-    "crypto/rand"
-    // "github.com/evalvarez12/cc-user-api/app/models"
     "fmt"
+    "crypto/rand"
 )
 
 var (
 	randomStringCharset = `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
 )
 
-// String() returns a random string of the given size.
 func randString(size uint) string {
 	buf := make([]byte, size)
 	rand.Read(buf)

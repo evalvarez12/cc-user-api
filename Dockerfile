@@ -18,10 +18,10 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN go get github.com/revel/cmd/revel
 
-RUN mkdir /go/src/cc &&\
-    mkdir /go/src/cc/users_api
+RUN mkdir /go/src/github.com/evalvarez12 &&\
+    mkdir /go/src/github.com/evalvarez12/cc-user-api
 
-COPY . /go/src/cc/users_api
+COPY . /go/src/github.com/evalvarez12/cc-user-api
 
 COPY docker-entrypoint.sh /
 

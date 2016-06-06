@@ -5,19 +5,22 @@ import (
 	"errors"
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 )
 
 func UserAdd(user models.User) (userID uint, err error) {
 	hashPassword(&user)
 
 	user.MarshalDB()
-	log.Println(user.Answers)
 	temp, err := userSource.Insert(user)
 	if err != nil {
 		return
 	}
 	userID = uint(temp.(int64))
+	return
+}
+
+func UserDelete(userID uint) (err error) {
+	err = userSource.Find("user_id", userID).Delete()
 	return
 }
 
@@ -40,7 +43,7 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 		return
 	}
 
-	sToken, err := token.SignedString([]byte("ccsignature"))
+	sToken, err := token.SignedString([]byte("pl8IKa8Wz5tu64JuV3ksSQ7YVyDDjet17jE5YXS37lIasCxjhYlHjYYGnNT9Gzs"))
 	if err != nil {
 		return
 	}
@@ -80,7 +83,7 @@ func UserLogout(userID uint, jti string) (err error) {
 	return
 }
 
-func UserLogoutAll(userID uint, jti string) (err error) {
+func UserLogoutAll(userID uint) (err error) {
 	var user models.User
 	err = userSource.Find("user_id", userID).One(&user)
 	if err != nil {

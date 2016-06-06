@@ -46,6 +46,21 @@ func (c Users) Logout() revel.Result {
 	return c.OK()
 }
 
+func (c Users) LogoutAll() revel.Result {
+	claims, err := c.GetSession()
+	if err != nil {
+		return c.Error(err)
+	}
+
+	userID := claims["id"].(uint)
+
+	err = ds.UserLogoutAll(userID)
+	if err != nil {
+		return c.Error(err)
+	}
+	return c.OK()
+}
+
 func (c Users) Add() revel.Result {
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -67,4 +82,19 @@ func (c Users) Add() revel.Result {
 		return c.Error(err)
 	}
 	return c.Data(id)
+}
+
+func (c Users) Delete() revel.Result {
+	claims, err := c.GetSession()
+	if err != nil {
+		return c.Error(err)
+	}
+
+	userID := claims["id"].(uint)
+
+	err = ds.UserDelete(userID)
+	if err != nil {
+		return c.Error(err)
+	}
+	return c.OK()
 }
