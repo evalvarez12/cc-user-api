@@ -42,7 +42,7 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 	}
 	user.AddJTI(token.Claims["jti"].(string))
 
-	err = userSource.Find("user_id", userID).Update(user)
+	err = userSource.Find("user_id", user.UserID).Update(user)
 	if err != nil {
 		return
 	}

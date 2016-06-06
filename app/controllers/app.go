@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/evalvarez12/cc-user-api/app/ds"
 	"github.com/revel/revel"
+	"github.com/evalvarez12/cc-user-api/app/ds"
+
 )
 
 type App struct {
@@ -62,11 +63,8 @@ func (c App) Data(data interface{}) revel.Result {
 	})
 }
 
-func (c App) GetSession() (uint, error) {
+func (c App) GetSession() (id uint, err error) {
 	sToken := c.Request.Header.Get("X-Auth-Token")
-	token, err := jwt.Parse(sToken, "ccsignature")
-	if err == nil && token.Valid {
-		return token.Claims["user_id"], nil
-	}
-	return 0, jwt.ErrNoTokenInRequest
+	id, err = ds.ValidateToken(sToken)
+	return
 }
