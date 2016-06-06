@@ -64,7 +64,7 @@ func (c App) Data(data interface{}) revel.Result {
 }
 
 func (c App) GetSession() (claims map[string]interface{}, err error) {
-	sToken := c.Request.Header.Get("X-Auth-Token")
+	sToken := c.Request.Header.Get("Authorization")
 	claims, err = ds.ValidateToken(sToken)
 	return
 }

@@ -8,6 +8,7 @@ module:jobs
 POST    /user                                  Users.Add
 POST    /user/login                            Users.Login
 GET     /user/logout                           Users.Logout
+DELETE  /user                                  Users.Delete
 
 
 # Ignore favicon requests

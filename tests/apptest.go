@@ -40,24 +40,26 @@ type loginResult struct {
 	Data    map[string]interface{} `json:"data,omitempty"`
 }
 
-func myPost(path string, contentType string, reader io.Reader, token string, t *AppTest) *http.Request {
-	req, err := http.NewRequest("POST", t.BaseUrl()+path, reader)
+
+func myVERB(verb, path string, contentType string, reader io.Reader, token string, t *AppTest) *http.Request {
+	var err error
+	var req *http.Request
+	switch verb {
+	case "POST" :
+		req, err = http.NewRequest("POST", t.BaseUrl()+path, reader)
+		req.Header.Set("Content-Type", contentType)
+	case "GET" :
+		req, err = http.NewRequest("GET", t.BaseUrl()+path, nil)
+	case "DELETE" :
+		req, err = http.NewRequest("DELETE", t.BaseUrl()+path, nil)
+	}
 	if err != nil {
 		panic(err)
 	}
-	req.Header.Set("Content-Type", contentType)
-	req.Header.Set("X-Auth-Token", token)
+	req.Header.Set("Authorization", token)
 	return req
 }
 
-func myGet(path, token string, t *AppTest) *http.Request {
-	req, err := http.NewRequest("GET", t.BaseUrl()+path, nil)
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Set("X-Auth-Token", token)
-	return req
-}
 
 func testSucces(t *AppTest) {
 	var result apiResult
@@ -68,7 +70,7 @@ func testSucces(t *AppTest) {
 
 // --------------- TEST FUNCTIONS -------------
 
-func (t *AppTest) TestAUserAdd() {
+func (t *AppTest) TestAdd() {
 	t.Post("/user", "application/json; charset=utf-8", strings.NewReader(userBody))
 	t.AssertOk()
 	testSucces(t)
@@ -76,7 +78,7 @@ func (t *AppTest) TestAUserAdd() {
 	log.Println(string(t.ResponseBody))
 }
 
-func (t *AppTest) TestAUserLogin() {
+func (t *AppTest) TestLogin() {
 	t.Post("/user/login", "application/json; charset=utf-8", strings.NewReader(loginBody))
 	buf := t.ResponseBody
 	var logRes loginResult
@@ -84,9 +86,18 @@ func (t *AppTest) TestAUserLogin() {
 	t.AssertEqual(err, nil)
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
-	// token = logRes.Data["token"].(string)
+	token = logRes.Data["token"].(string)
 	log.Println(string(t.ResponseBody))
-	// log.Println("Setting TOKEN to: " + token)
+	log.Println("Setting TOKEN to: " + token)
+}
+
+func (t *AppTest) TestDelete() {
+	req := myVERB("DELETE", "/user", "", nil, token, t)
+	t.NewTestRequest(req).Send()
+	t.AssertOk()
+	testSucces(t)
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
 }
 
 func (t *AppTest) Before() {

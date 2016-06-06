@@ -90,7 +90,7 @@ func (c Users) Delete() revel.Result {
 		return c.Error(err)
 	}
 
-	userID := claims["id"].(uint)
+	userID := uint(claims["id"].(float64))
 
 	err = ds.UserDelete(userID)
 	if err != nil {
