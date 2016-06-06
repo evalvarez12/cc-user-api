@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/revel/revel"
 	"github.com/evalvarez12/cc-user-api/app/ds"
-
+	"errors"
 )
 
 type App struct {
@@ -66,5 +66,19 @@ func (c App) Data(data interface{}) revel.Result {
 func (c App) GetSession() (claims map[string]interface{}, err error) {
 	sToken := c.Request.Header.Get("Authorization")
 	claims, err = ds.ValidateToken(sToken)
+	if err != nil {
+		return
+	}
+
+	userID := uint(claims["id"].(float64))
+	user, err := ds.UserGet(userID)
+	if err != nil {
+		return
+	}
+
+	if !user.ContainsJTI(claims["jti"].(string))  {
+		err = errors.New("Non existant session")
+	}
+
 	return
 }

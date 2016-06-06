@@ -103,6 +103,11 @@ func UserLogoutAll(userID uint) (err error) {
 	return
 }
 
+func UserGet(userID uint) (user models.User, err error) {
+	err = userSource.Find("user_id", userID).One(&user)
+	return
+}
+
 
 func hashPassword(user *models.User) {
 	b := make([]byte, 10)
