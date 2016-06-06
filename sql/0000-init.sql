@@ -1,6 +1,6 @@
 --' init.sql
 
--- cat sql/0000-init.sql | PGPASSWORD=pass psql -h localhost -Umazing financy
+-- cat sql/0000-init.sql | PGPASSWORD=pass psql -h localhost -Ucc cc_users
 
 DROP TABLE IF EXISTS "users";
 
@@ -11,6 +11,6 @@ CREATE TABLE "users" (
     "last_name"       VARCHAR(80),
     "hash"            BYTEA,
     "salt"            BYTEA,
-    "valid_jti"       VARCHAR(80),
+    "valid_jti"       BYTEA,
     "answers"         JSONB
 );

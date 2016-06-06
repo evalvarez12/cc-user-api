@@ -37,7 +37,7 @@ func newToken(userID uint) (token *jwt.Token, err error) {
 }
 
 
-func ValidateToken(sToken string) (userID uint, err error) {
+func ValidateToken(sToken string) (claims map[string]interface{}, err error) {
     token, err := jwt.Parse(sToken, func(token *jwt.Token) (interface{}, error) {
            // Don't forget to validate the alg is what you expect:
            if token.Header["alg"] != "HS256" {
@@ -47,7 +47,7 @@ func ValidateToken(sToken string) (userID uint, err error) {
    })
 
    if err == nil && token.Valid {
-       userID = token.Claims["id"].(uint)
+       claims = token.Claims
    }
    return
 }

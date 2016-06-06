@@ -32,7 +32,7 @@ func init() {
 	log.Printf("Database Container Address: %s", dbAddress)
 
 	settings := postgresql.ConnectionURL{
-		Database: `cc-users`,
+		Database: `cc_users`,
 		Host:     dbAddress,
 		User:     `cc`,
 		Password: `pass`,

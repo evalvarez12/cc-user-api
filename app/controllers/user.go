@@ -31,12 +31,15 @@ func (c Users) Login() revel.Result {
 }
 
 func (c Users) Logout() revel.Result {
-	userID, err := c.GetSession()
+	claims, err := c.GetSession()
 	if err != nil {
 		return c.Error(err)
 	}
 
-	err = ds.UserLogout(userID)
+	userID := claims["id"].(uint)
+	jti := claims["jti"].(string)
+
+	err = ds.UserLogout(userID, jti)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -63,5 +66,5 @@ func (c Users) Add() revel.Result {
 	if err != nil {
 		return c.Error(err)
 	}
-	return c.OK()
+	return c.Data(id)
 }

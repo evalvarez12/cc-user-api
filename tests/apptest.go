@@ -9,44 +9,16 @@ import (
 	"strings"
 )
 
-var chargeBody = `{
-	"name": "nueva carga",
-	"category_id" : 2,
-	"description": "taquitos y tequila",
-	"expected_date": "2015-01-05T17:14:12-06:00",
-	"real_amount": {
-	  "value": 123,
-	  "scale": 1
-	},
-	"coin": "MXN",
-	"kind": "expense",
-	"source": "Source B",
-	"destination": "Destination D"
-
-}`
-
-var categoryBody = `{
-      "name": "New Category",
-	  "kind": "income"
-}`
-
-var accountBody = `{
-  "name": "New Account",
-  "bank": "Cartera",
-  "description": "Gastar"
-}`
-
 var userBody = `{
-  "name": "JhonyBoy66",
-  "complete_name": "Juan Perez Perez",
-  "email": "jb00@bad.seed",
-  "created_at": "2016-03-23T13:14:29.141081-06:00",
-  "updated_at": "2016-03-23T13:14:29.141081-06:00",
-  "password": "juanito"
+  "first_name": "Juan",
+  "last_name" : "Perez",
+  "email" : "jb00@bad.seed",
+  "password": "juanito",
+  "answers" : {"city" : "CDMX", "money" : "lots"}
 }`
 
 var loginBody = `{
-  "name": "JhonyBoy66",
+  "email": "jb00@bad.seed",
   "password": "juanito"
 }`
 
@@ -96,69 +68,6 @@ func testSucces(t *AppTest) {
 
 // --------------- TEST FUNCTIONS -------------
 
-func (t *AppTest) TestChargesList() {
-	req := myGet("/charges", token, t)
-	t.NewTestRequest(req).Send()
-	t.AssertOk()
-	testSucces(t)
-	t.AssertContentType("application/json; charset=utf-8")
-	log.Println(string(t.ResponseBody))
-}
-
-func (t *AppTest) TestChargesAdd() {
-	req := myPost("/charges", "application/json; charset=utf-8", strings.NewReader(chargeBody), token, t)
-	t.NewTestRequest(req).Send()
-	t.AssertOk()
-	testSucces(t)
-	t.AssertContentType("application/json; charset=utf-8")
-	log.Println(string(t.ResponseBody))
-}
-
-func (t *AppTest) TestAccountsList() {
-	req := myGet("/accounts", token, t)
-	t.NewTestRequest(req).Send()
-	t.AssertOk()
-	testSucces(t)
-	t.AssertContentType("application/json; charset=utf-8")
-	log.Println(string(t.ResponseBody))
-}
-
-func (t *AppTest) TestAccountAdd() {
-	req := myPost("/accounts", "application/json; charset=utf-8", strings.NewReader(accountBody), token, t)
-	t.NewTestRequest(req).Send()
-	t.AssertOk()
-	testSucces(t)
-	t.AssertContentType("application/json; charset=utf-8")
-	log.Println(string(t.ResponseBody))
-}
-
-func (t *AppTest) TestCategoriesList() {
-	req := myGet("/categories", token, t)
-	t.NewTestRequest(req).Send()
-	t.AssertOk()
-	testSucces(t)
-	t.AssertContentType("application/json; charset=utf-8")
-	log.Println(string(t.ResponseBody))
-}
-
-func (t *AppTest) TestCategoriesPie() {
-	req := myGet("/categories/pie", token, t)
-	t.NewTestRequest(req).Send()
-	t.AssertOk()
-	testSucces(t)
-	t.AssertContentType("application/json; charset=utf-8")
-	log.Println(string(t.ResponseBody))
-}
-
-func (t *AppTest) TestCategoryAdd() {
-	req := myPost("/categories", "application/json; charset=utf-8", strings.NewReader(categoryBody), token, t)
-	t.NewTestRequest(req).Send()
-	t.AssertOk()
-	testSucces(t)
-	t.AssertContentType("application/json; charset=utf-8")
-	log.Println(string(t.ResponseBody))
-}
-
 func (t *AppTest) TestAUserAdd() {
 	t.Post("/user", "application/json; charset=utf-8", strings.NewReader(userBody))
 	t.AssertOk()
@@ -175,9 +84,9 @@ func (t *AppTest) TestAUserLogin() {
 	t.AssertEqual(err, nil)
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
-	token = logRes.Data["token"].(string)
+	// token = logRes.Data["token"].(string)
 	log.Println(string(t.ResponseBody))
-	log.Println("Setting TOKEN to: " + token)
+	// log.Println("Setting TOKEN to: " + token)
 }
 
 func (t *AppTest) Before() {

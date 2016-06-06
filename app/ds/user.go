@@ -5,11 +5,14 @@ import (
 	"errors"
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 func UserAdd(user models.User) (userID uint, err error) {
 	hashPassword(&user)
 
+	user.MarshalDB()
+	log.Println(user.Answers)
 	temp, err := userSource.Insert(user)
 	if err != nil {
 		return
@@ -20,11 +23,12 @@ func UserAdd(user models.User) (userID uint, err error) {
 
 func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err error) {
 	var user models.User
-	err = userSource.Find("first_name", logRequest.Name).One(&user)
+	err = userSource.Find("email", logRequest.Email).One(&user)
 	if err != nil {
 		err = errors.New("Incorrect Password or UserName")
 		return
 	}
+	user.UnmarshalDB()
 
 	err = bcrypt.CompareHashAndPassword(user.Hash, append([]byte(logRequest.Password), user.Salt...))
 	if err != nil {
@@ -42,6 +46,7 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 	}
 	user.AddJTI(token.Claims["jti"].(string))
 
+	user.MarshalDB()
 	err = userSource.Find("user_id", user.UserID).Update(user)
 	if err != nil {
 		return
@@ -62,9 +67,11 @@ func UserLogout(userID uint, jti string) (err error) {
 		err = errors.New("Incorrect Password or UserName")
 		return
 	}
+	user.UnmarshalDB()
 
 	user.RemoveJTI(jti)
 
+	user.MarshalDB()
 	err = userSource.Find("user_id", userID).Update(user)
 	if err != nil {
 		return
@@ -80,9 +87,11 @@ func UserLogoutAll(userID uint, jti string) (err error) {
 		err = errors.New("Incorrect Password or UserName")
 		return
 	}
+	user.UnmarshalDB()
 
 	user.ClearAllJTI()
 
+	user.MarshalDB()
 	err = userSource.Find("user_id", userID).Update(user)
 	if err != nil {
 		return

@@ -2,23 +2,27 @@ package models
 
 import (
 	"github.com/revel/revel"
+	"encoding/gob"
+	"bytes"
+	"github.com/jmoiron/sqlx/types"
 )
 
 type User struct {
-	UserID         uint        `json:"user_id" db:"user_id,omitempty"`
-	FirstName      string      `json:"first_name" db:"fist_name"`
-	LastName	   string      `json:"last_name" db:"last_name"`
-	Password       string      `json:"password" db:"-"`
-	Hash           []byte      `json:"-" db:"hash"`
-	Salt           []byte      `json:"-" db:"salt"`
-	Email          string      `json:"email" db:"email"`
-	ValidJTI       []string    `json:"-" db:"valid_jti"`
-	Answers        interface{} `json:"answers" db:"answers"`
+	UserID         uint           `json:"user_id" db:"user_id,omitempty"`
+	FirstName      string         `json:"first_name" db:"fist_name"`
+	LastName	   string         `json:"last_name" db:"last_name"`
+	Password       string         `json:"password" db:"-"`
+	Hash           []byte         `json:"-" db:"hash"`
+	Salt           []byte         `json:"-" db:"salt"`
+	Email          string         `json:"email" db:"email"`
+	ValidJTIs      []string       `json:"-" db:"-"`
+	ValidJTI       []byte         `json:"-" db:"valid_jti"`
+	Answers        types.JSONText `json:"answers" db:"answers"`
 }
 
 type UserLogin struct {
-	Name     string `json:"name"`
-	Password string `json:"password"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
 }
 
 func (user *User) Validate(v *revel.Validation) {
@@ -48,7 +52,7 @@ func (user *User) Validate(v *revel.Validation) {
 
 
 func (u User) ContainsJTI(jti string) bool {
-	for _, i := range u.ValidJTI {
+	for _, i := range u.ValidJTIs {
 		if i == jti {
 			return true
 		}
@@ -57,22 +61,33 @@ func (u User) ContainsJTI(jti string) bool {
 }
 
 func (u *User) AddJTI(jti string) {
-	if len(u.ValidJTI) > 4 {
-		u.ValidJTI = append(u.ValidJTI[1:], jti)
+	if len(u.ValidJTIs) > 4 {
+		u.ValidJTIs = append(u.ValidJTIs[1:], jti)
 	} else {
-		u.ValidJTI = append(u.ValidJTI, jti)
+		u.ValidJTIs = append(u.ValidJTIs, jti)
 	}
 }
 
 func (u *User) ClearAllJTI() {
-	u.ValidJTI = []string{}
+	u.ValidJTIs = []string{}
 }
 
 func (u *User) RemoveJTI(jti string) {
-	for j, i := range u.ValidJTI {
+	for j, i := range u.ValidJTIs {
 		if i == jti {
-			u.ValidJTI = append(u.ValidJTI[:j], u.ValidJTI[j+1:]...)
+			u.ValidJTIs = append(u.ValidJTIs[:j], u.ValidJTIs[j+1:]...)
 			break
 		}
 	}
+}
+
+func (u *User) MarshalDB() {
+	buffer := &bytes.Buffer{}
+	gob.NewEncoder(buffer).Encode(u.ValidJTIs)
+	u.ValidJTI = buffer.Bytes()
+}
+
+func (u *User) UnmarshalDB() {
+	buffer := &bytes.Buffer{}
+	gob.NewDecoder(buffer).Decode(u.ValidJTIs)
 }
