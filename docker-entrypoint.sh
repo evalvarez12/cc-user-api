@@ -2,4 +2,4 @@
 
 
 # Execute server test
-revel run financy/api
+revel run cc/users_api

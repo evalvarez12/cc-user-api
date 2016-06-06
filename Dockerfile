@@ -18,10 +18,10 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN go get github.com/revel/cmd/revel
 
-RUN mkdir /go/src/financy &&\
-    mkdir /go/src/financy/api
+RUN mkdir /go/src/cc &&\
+    mkdir /go/src/cc/users_api
 
-COPY . /go/src/financy/api
+COPY . /go/src/cc/users_api
 
 COPY docker-entrypoint.sh /
 
