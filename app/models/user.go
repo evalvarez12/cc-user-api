@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"bytes"
 	"github.com/jmoiron/sqlx/types"
+	"log"
 )
 
 type User struct {
@@ -88,6 +89,9 @@ func (u *User) MarshalDB() {
 }
 
 func (u *User) UnmarshalDB() {
-	buffer := &bytes.Buffer{}
-	gob.NewDecoder(buffer).Decode(u.ValidJTIs)
+	buffer := bytes.NewReader(u.ValidJTI)
+	s := []string{}
+	gob.NewDecoder(buffer).Decode(&s)
+	u.ValidJTIs = s
+	log.Printf("%v", s)
 }

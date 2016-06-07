@@ -4,6 +4,7 @@ import (
 	"github.com/revel/revel"
 	"github.com/evalvarez12/cc-user-api/app/ds"
 	"errors"
+	"log"
 )
 
 type App struct {
@@ -75,6 +76,11 @@ func (c App) GetSession() (claims map[string]interface{}, err error) {
 	if err != nil {
 		return
 	}
+
+	user.UnmarshalDB()
+
+	log.Printf("%v", user.ValidJTIs)
+	log.Printf(claims["jti"].(string))
 
 	if !user.ContainsJTI(claims["jti"].(string))  {
 		err = errors.New("Non existant session")

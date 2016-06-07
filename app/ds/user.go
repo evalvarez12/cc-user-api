@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 func UserAdd(user models.User) (userID uint, err error) {
@@ -48,6 +49,7 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 		return
 	}
 	user.AddJTI(token.Claims["jti"].(string))
+	log.Printf("%v", user.ValidJTIs)
 
 	user.MarshalDB()
 	err = userSource.Find("user_id", user.UserID).Update(user)

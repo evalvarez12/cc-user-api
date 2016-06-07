@@ -36,7 +36,7 @@ func (c Users) Logout() revel.Result {
 		return c.Error(err)
 	}
 
-	userID := claims["id"].(uint)
+	userID := uint(claims["id"].(float64))
 	jti := claims["jti"].(string)
 
 	err = ds.UserLogout(userID, jti)
@@ -52,7 +52,7 @@ func (c Users) LogoutAll() revel.Result {
 		return c.Error(err)
 	}
 
-	userID := claims["id"].(uint)
+	userID := uint(claims["id"].(float64))
 
 	err = ds.UserLogoutAll(userID)
 	if err != nil {
