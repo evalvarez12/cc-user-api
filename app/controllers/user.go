@@ -98,3 +98,12 @@ func (c Users) Delete() revel.Result {
 	}
 	return c.OK()
 }
+
+func (c Users) UpdateAnswers() revel.Result {
+	claims, err := c.GetSession()
+	if err != nil {
+		return c.Error(err)
+	}
+
+	userID := uint(claims["id"].(float64))
+}
