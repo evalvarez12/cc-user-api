@@ -1,61 +1,96 @@
-# upper.io/db [![Build Status](https://travis-ci.org/upper/db.svg?branch=v2)](https://travis-ci.org/upper/db) [![GoDoc](https://godoc.org/upper.io/db?status.svg)](https://godoc.org/upper.io/db.v2)
+# upper.io/db.v2 [![Build Status](https://travis-ci.org/upper/db.svg?branch=v2)](https://travis-ci.org/upper/db) [![GoDoc](https://godoc.org/upper.io/db.v2?status.svg)](https://godoc.org/upper.io/db.v2)
 
 <center>
-<img src="https://upper.io/db.v2/images/icon.svg" width="256" />
+<img src="http://beta.upper.io/db.v2/images/gopher.svg" width="256" />
 </center>
 
-## The `db` package
+## The `db.v2` package
 
-![Upper.io](https://upper.io/db.v2/res/general.png)
-
-`db` is a [Go][2] package that allows you to communicate with different
-databases through special *adapters* that wrap well-supported database drivers.
+The `upper.io/db.v2` package for [Go][2]  is a non-opinionated database access
+layer for Go that provides a common interface to work with different data
+sources such as PostgreSQL, MySQL, SQLite, QL and MongoDB.
 
 ```
-go get -u upper.io/db.v2
+go get upper.io/db.v2
 ```
 
-## Is `db` an ORM?
-
-`db` is not an ORM in the sense that it does not tell you how to design your
-application or how to validate your data. Instead of trying to lecture you,
-`db` focuses on being a easy to user tool that helps you dealing with common
-database operations.
-
-```go
-var people []Person
-
-res = col.Find(db.Cond{"name": "Max"}).Limit(10).Sort("-last_name")
-
-err = res.All(&people)
-...
-```
-
-`db` can be considered a non-opinionated ORM that rather stays out of your way.
-
-## Supported databases
-
-![Adapters](https://upper.io/db.v2/res/adapters.png)
-
-`db` attempts to provide full compatiblity for [CRUD][2] operations across all
-its adapters. Some other operations (such *transactions*) are supported only
-with specific database adapters, such as MySQL, PostgreSQL and SQLite.
-
-* [MongoDB](https://upper.io/db.v2/mongo) via [mgo](http://godoc.org/labix.org/v2/mgo)
-* [MySQL](https://upper.io/db.v2/mysql) via [mysql](https://github.com/go-sql-driver/mysql)
-* [PostgreSQL](https://upper.io/db.v2/postgresql) via [pq](https://github.com/lib/pq)
-* [QL](https://upper.io/db.v2/ql) via [ql](https://github.com/cznic/ql)
-* [SQLite3](https://upper.io/db.v2/sqlite) via [go-sqlite3](https://github.com/mattn/go-sqlite3)
+![upper.io](http://beta.upper.io/db.v2/res/general.png)
 
 ## User documentation
 
-See documentation for users at [upper.io/db.v2][1].
+This is the source code repository, see examples and documentation at
+[beta.upper.io/db.v2][1].
+
+## Demo
+
+```go
+package main
+
+import (
+	"log"
+
+	"upper.io/db.v2/postgresql"
+)
+
+var settings = postgresql.ConnectionURL{
+	Host:     "demo.upper.io",
+	Database: "booktown",
+	User:     "demouser",
+	Password: "demop4ss",
+}
+
+type Book struct {
+	ID        int    `db:"id"`
+	Title     string `db:"title"`
+	AuthorID  int    `db:"author_id"`
+	SubjectID int    `db:"subject_id"`
+}
+
+func main() {
+	sess, err := postgresql.Open(settings)
+	if err != nil {
+		log.Fatalf("db.Open(): %q\n", err)
+	}
+	defer sess.Close()
+
+	booksCol := sess.Collection("books")
+
+	var books []Book
+	err = booksCol.Find().All(&books)
+	if err != nil {
+		log.Fatalf("Find(): %q\n", err)
+	}
+
+	for i, book := range books {
+		log.Printf("Book %d: %#v\n", i, book)
+	}
+}
+```
+
+```
+go run _examples/booktown-books/main.go
+2016/05/23 18:08:03 Book 0: main.Book{ID:7808, Title:"The Shining", AuthorID:4156, SubjectID:9}
+2016/05/23 18:08:03 Book 1: main.Book{ID:4513, Title:"Dune", AuthorID:1866, SubjectID:15}
+2016/05/23 18:08:03 Book 2: main.Book{ID:4267, Title:"2001: A Space Odyssey", AuthorID:2001, SubjectID:15}
+2016/05/23 18:08:03 Book 3: main.Book{ID:1608, Title:"The Cat in the Hat", AuthorID:1809, SubjectID:2}
+2016/05/23 18:08:03 Book 4: main.Book{ID:1590, Title:"Bartholomew and the Oobleck", AuthorID:1809, SubjectID:2}
+2016/05/23 18:08:03 Book 5: main.Book{ID:25908, Title:"Franklin in the Dark", AuthorID:15990, SubjectID:2}
+2016/05/23 18:08:03 Book 6: main.Book{ID:1501, Title:"Goodnight Moon", AuthorID:2031, SubjectID:2}
+2016/05/23 18:08:03 Book 7: main.Book{ID:190, Title:"Little Women", AuthorID:16, SubjectID:6}
+2016/05/23 18:08:03 Book 8: main.Book{ID:1234, Title:"The Velveteen Rabbit", AuthorID:25041, SubjectID:3}
+2016/05/23 18:08:03 Book 9: main.Book{ID:2038, Title:"Dynamic Anatomy", AuthorID:1644, SubjectID:0}
+2016/05/23 18:08:03 Book 10: main.Book{ID:156, Title:"The Tell-Tale Heart", AuthorID:115, SubjectID:9}
+2016/05/23 18:08:03 Book 11: main.Book{ID:41473, Title:"Programming Python", AuthorID:7805, SubjectID:4}
+2016/05/23 18:08:03 Book 12: main.Book{ID:41477, Title:"Learning Python", AuthorID:7805, SubjectID:4}
+2016/05/23 18:08:03 Book 13: main.Book{ID:41478, Title:"Perl Cookbook", AuthorID:7806, SubjectID:4}
+2016/05/23 18:08:03 Book 14: main.Book{ID:41472, Title:"Practical PostgreSQL", AuthorID:1212, SubjectID:4}
+```
 
 ## License
 
 This project is licensed under the terms of the **MIT License**.
 
-> Copyright (c) 2012-2015 The upper.io/db authors. All rights reserved.
+> Copyright (c) 2012-2016 The upper.io/db authors. All rights reserved.
 >
 > Permission is hereby granted, free of charge, to any person obtaining
 > a copy of this software and associated documentation files (the
@@ -95,6 +130,6 @@ This project is licensed under the terms of the **MIT License**.
 * Hiram J. Pérez <worg@linuxmail.org>
 * Aaron <aaron.l.france@gmail.com>
 
-[1]: https://upper.io/db.v2
+[1]: http://beta.upper.io/db.v2
 [2]: http://golang.org
 [3]: http://en.wikipedia.org/wiki/Create,_read,_update_and_delete

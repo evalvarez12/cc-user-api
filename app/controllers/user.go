@@ -6,7 +6,6 @@ import (
 	"github.com/revel/revel"
 	"encoding/json"
 	"io/ioutil"
-	"github.com/jmoiron/sqlx/types"
 )
 
 type Users struct {
@@ -23,7 +22,7 @@ func (c Users) Login() revel.Result {
 	if err != nil {
 		return c.Error(err)
 	}
-	login, err := ds.UserLogin(logRequest)
+	login, err := ds.Login(logRequest)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -37,7 +36,7 @@ func (c Users) Logout() revel.Result {
 		return c.Error(err)
 	}
 
-	err = ds.UserLogout(userID, jti)
+	err = ds.Logout(userID, jti)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -50,7 +49,7 @@ func (c Users) LogoutAll() revel.Result {
 		return c.Error(err)
 	}
 
-	err = ds.UserLogoutAll(userID)
+	err = ds.LogoutAll(userID)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -73,7 +72,7 @@ func (c Users) Add() revel.Result {
 		return c.ErrorData(errors)
 	}
 
-	id, err := ds.UserAdd(newUser)
+	id, err := ds.Add(newUser)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -86,7 +85,7 @@ func (c Users) Delete() revel.Result {
 		return c.Error(err)
 	}
 
-	err = ds.UserDelete(userID)
+	err = ds.Delete(userID)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -109,10 +108,32 @@ func (c Users) UpdateAnswers() revel.Result {
 		return c.Error(err)
 	}
 
-	err := ds.UserUpdateAnswers(userID, bodyAnswers)
+	err = ds.UpdateAnswers(userID, bodyAnswers)
+	if err != nil {
+		return c.Error(err)
+	}
+	return c.OK()
+}
+
+func (c Users) Update() revel.Result {
+	userID, _, err := c.GetSession()
 	if err != nil {
 		return c.Error(err)
 	}
 
-	return c.Ok()
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		return c.Error(err)
+	}
+	var user models.User
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	err = ds.Update(userID, user)
+	if err != nil {
+		return c.Error(err)
+	}
+	return c.OK()
 }

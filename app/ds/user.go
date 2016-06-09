@@ -6,17 +6,19 @@ import (
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"upper.io/db.v2"
+	"time"
 )
 
 func GetSession(token string) (userID uint, jti string, err error) {
-	claims, err = ValidateToken(token)
+	claims, err := ValidateToken(token)
 	if err != nil {
 		return
 	}
 
 	userID = uint(claims["id"].(float64))
 	var user models.User
-	err = userSource.Find("user_id", userID).One(&user)
+	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
 	if err != nil {
 		return
 	}
@@ -40,7 +42,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 	return
 }
 
-func UserAdd(user models.User) (userID uint, err error) {
+func Add(user models.User) (userID uint, err error) {
 	hashPassword(&user)
 
 	user.MarshalDB()
@@ -52,12 +54,12 @@ func UserAdd(user models.User) (userID uint, err error) {
 	return
 }
 
-func UserDelete(userID uint) (err error) {
-	err = userSource.Find("user_id", userID).Delete()
+func Delete(userID uint) (err error) {
+	err = userSource.Find(db.Cond{"user_id" : userID}).Delete()
 	return
 }
 
-func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err error) {
+func Login(logRequest models.UserLogin) (login map[string]interface{}, err error) {
 	var user models.User
 	err = userSource.Find("email", logRequest.Email).One(&user)
 	if err != nil {
@@ -97,11 +99,10 @@ func UserLogin(logRequest models.UserLogin) (login map[string]interface{}, err e
 	return
 }
 
-func UserLogout(userID uint, jti string) (err error) {
+func Logout(userID uint, jti string) (err error) {
 	var user models.User
-	err = userSource.Find("user_id", userID).One(&user)
+	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
 	if err != nil {
-		err = errors.New("Incorrect Password or UserName")
 		return
 	}
 	user.UnmarshalDB()
@@ -109,15 +110,14 @@ func UserLogout(userID uint, jti string) (err error) {
 	user.RemoveJTI(jti)
 
 	user.MarshalDB()
-	err = userSource.Find("user_id", userID).Update(user)
+	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
 	return
 }
 
-func UserLogoutAll(userID uint) (err error) {
+func LogoutAll(userID uint) (err error) {
 	var user models.User
-	err = userSource.Find("user_id", userID).One(&user)
+	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
 	if err != nil {
-		err = errors.New("Incorrect Password or UserName")
 		return
 	}
 	user.UnmarshalDB()
@@ -125,14 +125,14 @@ func UserLogoutAll(userID uint) (err error) {
 	user.ClearAllJTI()
 
 	user.MarshalDB()
-	err = userSource.Find("user_id", userID).Update(user)
+	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
 	return
 }
 
-func UserUpdateAnswers(userID uint, answers models.Answers) (err error) {
-	err = userSource.Find("user_id", userID).One(&user)
+func UpdateAnswers(userID uint, answers models.Answers) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
 	if err != nil {
-		err = errors.New("Incorrect Password or UserName")
 		return
 	}
 	user.UnmarshalDB()
@@ -140,7 +140,22 @@ func UserUpdateAnswers(userID uint, answers models.Answers) (err error) {
 	user.Answers = answers.Answers
 
 	user.MarshalDB()
-	err = userSource.Find("user_id", userID).Update(user)
+	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
+	return
+}
+
+func Update(userID uint, userNew models.User) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
+	if err != nil {
+		return
+	}
+	user.UnmarshalDB()
+
+	user = userNew
+
+	user.MarshalDB()
+	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
 	return
 }
 

@@ -3,8 +3,6 @@ package controllers
 import (
 	"github.com/revel/revel"
 	"github.com/evalvarez12/cc-user-api/app/ds"
-	"errors"
-	"log"
 )
 
 type App struct {

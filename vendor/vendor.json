@@ -9,64 +9,94 @@
 			"revisionTime": "2014-09-21T22:56:20Z"
 		},
 		{
-			"checksumSHA1": "BBgsL7bwgq77cPNHtAPb/7qpPOk=",
+			"checksumSHA1": "FwxTDf3E9qpIJlxec5aT8GjRX+o=",
 			"path": "github.com/dgrijalva/jwt-go",
-			"revision": "9b486c879bab3fde556ce8c27d9a2bb05d5b2c60",
-			"revisionTime": "2016-05-31T18:11:19Z"
+			"revision": "c04502f106d7c5b3fae17c5da49a1bbdd3006b3c",
+			"revisionTime": "2016-06-07T00:56:07Z"
 		},
 		{
 			"checksumSHA1": "GcQr3CU3QydTnvL+1gzZjNOELXI=",
 			"path": "github.com/jmoiron/sqlx/types",
-			"revision": "398dd5876282499cdfd4cb8ea0f31a672abe9495",
-			"revisionTime": "2016-02-06T22:15:33Z"
+			"revision": "e4a302b8d3a49ad2790f2232df7fcd668f54366f",
+			"revisionTime": "2016-06-05T17:15:01Z"
 		},
 		{
-			"checksumSHA1": "nE1IVfcH7CNDb9Qn+AtW9Dlmlts=",
+			"checksumSHA1": "nfsPW9mmBQaK2gKbfRwXlRZmeuM=",
+			"path": "github.com/klauspost/compress/flate",
+			"revision": "14eb9c4951195779ecfbec34431a976de7335b0a",
+			"revisionTime": "2016-04-21T08:16:54Z"
+		},
+		{
+			"checksumSHA1": "fwC1ob/fwvPkjuwAusYPDwdwBUU=",
+			"path": "github.com/klauspost/compress/gzip",
+			"revision": "14eb9c4951195779ecfbec34431a976de7335b0a",
+			"revisionTime": "2016-04-21T08:16:54Z"
+		},
+		{
+			"checksumSHA1": "MSfzKJkDgCfuW95gPLm4wbf08Q4=",
+			"path": "github.com/klauspost/compress/zlib",
+			"revision": "14eb9c4951195779ecfbec34431a976de7335b0a",
+			"revisionTime": "2016-04-21T08:16:54Z"
+		},
+		{
+			"checksumSHA1": "iKPMvbAueGfdyHcWCgzwKzm8WVo=",
+			"path": "github.com/klauspost/cpuid",
+			"revision": "09cded8978dc9e80714c4d85b0322337b0a1e5e0",
+			"revisionTime": "2016-03-02T07:53:16Z"
+		},
+		{
+			"checksumSHA1": "hX+j017F4PEtIUGflAneDtLC6hs=",
+			"path": "github.com/klauspost/crc32",
+			"revision": "19b0b332c9e4516a6370a0456e6182c3b5036720",
+			"revisionTime": "2016-02-19T14:26:09Z"
+		},
+		{
+			"checksumSHA1": "84hbcb5NWMIW9jQf51+2uaNj/eY=",
 			"path": "github.com/lib/pq",
-			"revision": "dd3290b2f71a8b30bee8e4e75a337a825263d26f",
-			"revisionTime": "2016-04-26T17:35:18Z"
+			"revision": "ee1442bda7bd1b6a84e913bdb421cb1874ec629d",
+			"revisionTime": "2016-05-10T22:24:21Z"
 		},
 		{
 			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
 			"path": "github.com/lib/pq/oid",
-			"revision": "dd3290b2f71a8b30bee8e4e75a337a825263d26f",
-			"revisionTime": "2016-04-26T17:35:18Z"
+			"revision": "ee1442bda7bd1b6a84e913bdb421cb1874ec629d",
+			"revisionTime": "2016-05-10T22:24:21Z"
 		},
 		{
-			"checksumSHA1": "ET/s5p2+hfEN2K352rP6R4ZgpQU=",
+			"checksumSHA1": "ClQZhBGCpYykPyu8HTE9u5P2rS0=",
+			"path": "github.com/revel/config",
+			"revision": "75f5ee659b5338d1ce823536fe9b9e50b4de01b4",
+			"revisionTime": "2016-06-06T01:28:00Z"
+		},
+		{
+			"checksumSHA1": "WRvfYzoxOzdI4+DNum7FWXjaKc4=",
 			"path": "github.com/revel/modules/static/app/controllers",
-			"revision": "3589d5bf1d1b6da10a88c53701db2af12dfc0811",
-			"revisionTime": "2015-03-25T14:41:35Z"
+			"revision": "c3a4c48d9f199a6f1a77a198d38f6aee3b48b4d9",
+			"revisionTime": "2016-06-07T00:01:32Z"
 		},
 		{
 			"checksumSHA1": "etxrHwItxesgksq2XqaRzQe3PLw=",
 			"path": "github.com/revel/modules/testrunner/app",
-			"revision": "3589d5bf1d1b6da10a88c53701db2af12dfc0811",
-			"revisionTime": "2015-03-25T14:41:35Z"
+			"revision": "c3a4c48d9f199a6f1a77a198d38f6aee3b48b4d9",
+			"revisionTime": "2016-06-07T00:01:32Z"
 		},
 		{
-			"checksumSHA1": "L7LGxK6KSE4ZivpFqhbkjcdH8+4=",
+			"checksumSHA1": "nbQJPUZ3VigASmU3puNnliEpjzE=",
 			"path": "github.com/revel/modules/testrunner/app/controllers",
-			"revision": "3589d5bf1d1b6da10a88c53701db2af12dfc0811",
-			"revisionTime": "2015-03-25T14:41:35Z"
+			"revision": "c3a4c48d9f199a6f1a77a198d38f6aee3b48b4d9",
+			"revisionTime": "2016-06-07T00:01:32Z"
 		},
 		{
-			"checksumSHA1": "MoSiIyaR7fKtUKASJOw+XyPmwms=",
+			"checksumSHA1": "fOjG/F39Uj2PiUM7eRaakxeTsms=",
 			"path": "github.com/revel/revel",
-			"revision": "a9a2ff45fae4330ef4116b257bcf9c82e53350c2",
-			"revisionTime": "2015-09-12T07:10:25Z"
+			"revision": "8d01a054f6bca9430b3e497fe7b4f20ec8f054ce",
+			"revisionTime": "2016-06-07T00:11:44Z"
 		},
 		{
-			"checksumSHA1": "/dK/Zr4AGzyEHVgN/stSrbqOp6c=",
+			"checksumSHA1": "MLLLsgNHLhmDDWPwdCAk9ts0B7o=",
 			"path": "github.com/revel/revel/testing",
-			"revision": "a9a2ff45fae4330ef4116b257bcf9c82e53350c2",
-			"revisionTime": "2015-09-12T07:10:25Z"
-		},
-		{
-			"checksumSHA1": "UpD3DOBV4ke+MSUYOotu4qciG7A=",
-			"path": "github.com/robfig/config",
-			"revision": "0f78529c8c7e3e9a25f15876532ecbc07c7d99e6",
-			"revisionTime": "2014-12-07T22:47:36Z"
+			"revision": "8d01a054f6bca9430b3e497fe7b4f20ec8f054ce",
+			"revisionTime": "2016-06-07T00:11:44Z"
 		},
 		{
 			"checksumSHA1": "wtQXDLDa/OJuf3N+jviyY6pYNNA=",
@@ -77,26 +107,26 @@
 		{
 			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
 			"path": "golang.org/x/crypto/bcrypt",
-			"revision": "47ff8dfbc528fea3003fc0ce2d88ffbbfbc46a43",
-			"revisionTime": "2016-05-06T17:46:57Z"
+			"revision": "77f4136a99ffb5ecdbdd0226bd5cb146cf56bc0e",
+			"revisionTime": "2016-06-07T10:36:12Z"
 		},
 		{
-			"checksumSHA1": "udD2DzUPFZbMVXP0VNADhef4zKk=",
+			"checksumSHA1": "JsJdKXhz87gWenMwBeejTOeNE7k=",
 			"path": "golang.org/x/crypto/blowfish",
-			"revision": "47ff8dfbc528fea3003fc0ce2d88ffbbfbc46a43",
-			"revisionTime": "2016-05-06T17:46:57Z"
+			"revision": "77f4136a99ffb5ecdbdd0226bd5cb146cf56bc0e",
+			"revisionTime": "2016-06-07T10:36:12Z"
 		},
 		{
-			"checksumSHA1": "fiFafSbOoQaM6Ad+zn7z/xAwLtE=",
+			"checksumSHA1": "likOl7O0BJntqagR050kkOBuY4o=",
 			"path": "golang.org/x/net/websocket",
-			"revision": "2a35e686583654a1b89ca79c4ac78cb3d6529ca3",
-			"revisionTime": "2016-05-06T19:47:26Z"
+			"revision": "3f122ce3dbbe488b7e6a8bdb26f41edec852a40b",
+			"revisionTime": "2016-06-09T04:57:12Z"
 		},
 		{
-			"checksumSHA1": "CoRxz7vk573Zu/UcMS4PzpAsv3w=",
+			"checksumSHA1": "QcDlr1sWBDt6Dn/v7W/MRgccAi4=",
 			"path": "golang.org/x/sys/unix",
-			"revision": "b776ec39b3e54652e09028aaaaac9757f4f8211a",
-			"revisionTime": "2016-04-21T02:29:30Z"
+			"revision": "076b546753157f758b316e59bcb51e6807c04057",
+			"revisionTime": "2016-06-01T13:19:39Z"
 		},
 		{
 			"checksumSHA1": "JfVmsMwyeeepbdw4q4wpN07BuFg=",
@@ -105,58 +135,58 @@
 			"revisionTime": "2016-04-12T13:37:56Z"
 		},
 		{
-			"checksumSHA1": "epGMwCHhSqQI+9+spbNJS3sDR30=",
+			"checksumSHA1": "xw2TP1Q5zpADbuZO8x7KbSl5qx0=",
 			"path": "upper.io/db.v2",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
-			"checksumSHA1": "d3YqyuTfnTW5whVUbw7UMKBaSPc=",
+			"checksumSHA1": "6l0wrLuXnUATtgGaC35QrMcOTW4=",
 			"path": "upper.io/db.v2/builder",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
 			"checksumSHA1": "hXl504JWv33bnR5DoZddbEHOUtw=",
 			"path": "upper.io/db.v2/builder/cache",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
 			"checksumSHA1": "+AzOo0wOGRwUr6XfeDQ0akKmyRE=",
 			"path": "upper.io/db.v2/builder/cache/hashstructure",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
 			"checksumSHA1": "P5MwHzS5huICLEghu/ybD2zDvBQ=",
 			"path": "upper.io/db.v2/builder/exql",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
 			"checksumSHA1": "8ykpjMZjnRXzfAa3o9uqpuJEVgM=",
 			"path": "upper.io/db.v2/builder/reflectx",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
 			"checksumSHA1": "RZRbk3Z6UACowuNkzAv7tsr1mU4=",
 			"path": "upper.io/db.v2/internal/logger",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
-			"checksumSHA1": "PTLzDMPEM2U2N8Dj1zv1fXhWiyY=",
+			"checksumSHA1": "2RTWUoVuHJyjEtrEy07NJPA8KKM=",
 			"path": "upper.io/db.v2/internal/sqladapter",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		},
 		{
 			"checksumSHA1": "r+eEaKxgRTnVard5e+r8x/URZPQ=",
 			"path": "upper.io/db.v2/postgresql",
-			"revision": "e7531b8ff5108bfb3585eabc482b2039eded797a",
-			"revisionTime": "2016-05-17T11:55:22Z"
+			"revision": "802127f023280382525d654f62e8c54423e34e10",
+			"revisionTime": "2016-05-23T23:14:01Z"
 		}
 	],
 	"rootPath": "github.com/evalvarez12/cc-user-api"

@@ -16,7 +16,7 @@ package config
 
 import (
 	"bufio"
-	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"unicode"
@@ -58,8 +58,10 @@ func ReadDefault(fname string) (*Config, error) {
 func (c *Config) read(buf *bufio.Reader) (err error) {
 	var section, option string
 	var scanner = bufio.NewScanner(buf)
+	lineNo := 0
 	for scanner.Scan() {
 		l := strings.TrimRightFunc(stripComments(scanner.Text()), unicode.IsSpace)
+		lineNo++
 
 		// Switch written for readability (not performance)
 		switch {
@@ -92,7 +94,7 @@ func (c *Config) read(buf *bufio.Reader) (err error) {
 				c.AddOption(section, option, value)
 
 			default:
-				return errors.New("could not parse line: " + l)
+				return fmt.Errorf("could not parse line #%v: %v", lineNo, l)
 			}
 		}
 	}

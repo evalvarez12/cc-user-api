@@ -28,7 +28,7 @@ the Python Standard Library.
 
 ## Installation
 
-	go get github.com/robfig/config
+	go get github.com/revel/config
 
 ## Operating instructions
 

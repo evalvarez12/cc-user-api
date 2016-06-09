@@ -9,19 +9,6 @@ import (
 	"strings"
 )
 
-var userBody = `{
-  "first_name": "Juan",
-  "last_name" : "Perez",
-  "email" : "jb00@bad.seed",
-  "password": "juanito",
-  "answers" : {"city" : "CDMX", "money" : "lots"}
-}`
-
-var loginBody = `{
-  "email": "jb00@bad.seed",
-  "password": "juanito"
-}`
-
 var token string
 
 type AppTest struct {
@@ -33,13 +20,6 @@ type apiResult struct {
 	Error   string      `json:"error,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 }
-
-type loginResult struct {
-	Success bool                   `json:"succes"`
-	Error   string                 `json:"error,omitempty"`
-	Data    map[string]interface{} `json:"data,omitempty"`
-}
-
 
 func myVERB(verb, path string, contentType string, reader io.Reader, token string, t *AppTest) *http.Request {
 	var err error
@@ -61,12 +41,13 @@ func myVERB(verb, path string, contentType string, reader io.Reader, token strin
 }
 
 
-func testSucces(t *AppTest) {
+func testSuccess(t *AppTest, pass bool) {
 	var result apiResult
 	err := json.Unmarshal(t.ResponseBody, &result)
 	t.AssertEqual(err, nil)
-	// t.AssertEqual(result.Success, true)
+	t.AssertEqual(result.Success, pass)
 }
+
 
 // --------------- TEST FUNCTIONS -------------
 
@@ -76,19 +57,22 @@ func (t *AppTest) TestAdd() {
 	testSucces(t)
 	t.AssertContentType("application/json; charset=utf-8")
 	log.Println(string(t.ResponseBody))
+	var result apiResult
 }
 
 func (t *AppTest) TestLogin() {
 	t.Post("/user/login", "application/json; charset=utf-8", strings.NewReader(loginBody))
 	buf := t.ResponseBody
-	var logRes loginResult
+	var logRes apiResult
 	err := json.Unmarshal(buf, &logRes)
 	t.AssertEqual(err, nil)
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
-	token = logRes.Data["token"].(string)
-	log.Println(string(t.ResponseBody))
-	log.Println("Setting TOKEN to: " + token)
+	if logRes.Data != nil {
+		token = logRes.Data.(map[string]interface{})["token"].(string)
+		log.Println(string(t.ResponseBody))
+		log.Println("Setting TOKEN to: " + token)
+	}
 }
 
 func (t *AppTest) TestDelete() {
@@ -101,9 +85,9 @@ func (t *AppTest) TestDelete() {
 }
 
 func (t *AppTest) Before() {
-	log.Println("-------->")
+	log.Println("+++++++++++++++++++++++++++++++++++++++++++++++++")
 }
 
 func (t *AppTest) After() {
-	log.Println("<--------")
+	log.Println("-------------------------------------------------")
 }
