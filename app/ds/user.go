@@ -8,6 +8,38 @@ import (
 	"log"
 )
 
+func GetSession(token string) (userID uint, jti string, err error) {
+	claims, err = ValidateToken(token)
+	if err != nil {
+		return
+	}
+
+	userID = uint(claims["id"].(float64))
+	var user models.User
+	err = userSource.Find("user_id", userID).One(&user)
+	if err != nil {
+		return
+	}
+
+	user.UnmarshalDB()
+
+	if time.Now().Unix() > int64(claims["exp"].(float64)) {
+		err = errors.New("Session expired")
+		user.RemoveJTI(claims["jti"].(string))
+		user.MarshalDB()
+		_ = userSource.Find(db.Cond{"user_id": userID}).Update(user)
+		return
+	}
+
+	if !user.ContainsJTI(claims["jti"].(string))  {
+		err = errors.New("Non existant session")
+		return
+	}
+
+	jti = claims["jti"].(string)
+	return
+}
+
 func UserAdd(user models.User) (userID uint, err error) {
 	hashPassword(&user)
 
@@ -78,10 +110,6 @@ func UserLogout(userID uint, jti string) (err error) {
 
 	user.MarshalDB()
 	err = userSource.Find("user_id", userID).Update(user)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -98,17 +126,24 @@ func UserLogoutAll(userID uint) (err error) {
 
 	user.MarshalDB()
 	err = userSource.Find("user_id", userID).Update(user)
+	return
+}
+
+func UserUpdateAnswers(userID uint, answers models.Answers) (err error) {
+	err = userSource.Find("user_id", userID).One(&user)
 	if err != nil {
+		err = errors.New("Incorrect Password or UserName")
 		return
 	}
+	user.UnmarshalDB()
 
+	user.Answers = answers.Answers
+
+	user.MarshalDB()
+	err = userSource.Find("user_id", userID).Update(user)
 	return
 }
 
-func UserGet(userID uint) (user models.User, err error) {
-	err = userSource.Find("user_id", userID).One(&user)
-	return
-}
 
 
 func hashPassword(user *models.User) {

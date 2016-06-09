@@ -64,27 +64,8 @@ func (c App) Data(data interface{}) revel.Result {
 	})
 }
 
-func (c App) GetSession() (claims map[string]interface{}, err error) {
+func (c App) GetSession() (userID uint, jti string, err error) {
 	sToken := c.Request.Header.Get("Authorization")
-	claims, err = ds.ValidateToken(sToken)
-	if err != nil {
-		return
-	}
-
-	userID := uint(claims["id"].(float64))
-	user, err := ds.UserGet(userID)
-	if err != nil {
-		return
-	}
-
-	user.UnmarshalDB()
-
-	log.Printf("%v", user.ValidJTIs)
-	log.Printf(claims["jti"].(string))
-
-	if !user.ContainsJTI(claims["jti"].(string))  {
-		err = errors.New("Non existant session")
-	}
-
+	userID, jti, err = ds.GetSession(sToken)
 	return
 }

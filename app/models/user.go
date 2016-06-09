@@ -26,6 +26,10 @@ type UserLogin struct {
 	Password  string `json:"password"`
 }
 
+type Answers struct {
+	Answers types.JSONText `json:"answers"`
+}
+
 func (user *User) Validate(v *revel.Validation) {
 	v.Required(user.FirstName)
 	v.MinSize(user.FirstName, 4)
