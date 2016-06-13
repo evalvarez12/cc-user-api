@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/revel/revel"
 	"github.com/evalvarez12/cc-user-api/app/ds"
+	"github.com/revel/revel"
 )
 
 type App struct {

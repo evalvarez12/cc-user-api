@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	userTest     = models.User{}
+	userTest = models.User{}
 )
 
 func TestUserSource(t *testing.T) {

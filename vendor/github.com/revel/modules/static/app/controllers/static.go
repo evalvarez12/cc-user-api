@@ -74,7 +74,6 @@ func (c Static) ServeModule(moduleName, prefix, filepath string) revel.Result {
 	return serve(c, absPath, filepath)
 }
 
-
 // This method allows static serving of application files in a verified manner.
 func serve(c Static, prefix, filepath string) revel.Result {
 	var basePath string

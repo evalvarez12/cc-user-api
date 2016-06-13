@@ -1,29 +1,29 @@
 package models
 
 import (
-	"github.com/revel/revel"
-	"encoding/gob"
 	"bytes"
+	"encoding/gob"
 	"github.com/jmoiron/sqlx/types"
+	"github.com/revel/revel"
 	"log"
 )
 
 type User struct {
-	UserID         uint           `json:"user_id" db:"user_id,omitempty"`
-	FirstName      string         `json:"first_name" db:"fist_name"`
-	LastName	   string         `json:"last_name" db:"last_name"`
-	Password       string         `json:"password" db:"-"`
-	Hash           []byte         `json:"-" db:"hash"`
-	Salt           []byte         `json:"-" db:"salt"`
-	Email          string         `json:"email" db:"email"`
-	ValidJTIs      []string       `json:"-" db:"-"`
-	ValidJTI       []byte         `json:"-" db:"valid_jti"`
-	Answers        types.JSONText `json:"answers" db:"answers"`
+	UserID    uint           `json:"user_id" db:"user_id,omitempty"`
+	FirstName string         `json:"first_name" db:"fist_name"`
+	LastName  string         `json:"last_name" db:"last_name"`
+	Password  string         `json:"password" db:"-"`
+	Hash      []byte         `json:"-" db:"hash"`
+	Salt      []byte         `json:"-" db:"salt"`
+	Email     string         `json:"email" db:"email"`
+	ValidJTIs []string       `json:"-" db:"-"`
+	ValidJTI  []byte         `json:"-" db:"valid_jti"`
+	Answers   types.JSONText `json:"answers" db:"answers"`
 }
 
 type UserLogin struct {
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type Answers struct {
@@ -41,7 +41,6 @@ func (user *User) Validate(v *revel.Validation) {
 	v.Email(user.Email)
 }
 
-
 // func (c *User) MarshalJSON() ([]byte, error) {
 //     type Alias User
 //     return json.Marshal(&struct {
@@ -54,7 +53,6 @@ func (user *User) Validate(v *revel.Validation) {
 // 		UpdatedAt: c.UpdatedAt.Format("2006-01-02 15:04:05"),
 //     })
 // }
-
 
 func (u User) ContainsJTI(jti string) bool {
 	for _, i := range u.ValidJTIs {

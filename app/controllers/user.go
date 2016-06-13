@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/evalvarez12/cc-user-api/app/ds"
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"github.com/revel/revel"
-	"encoding/json"
 	"io/ioutil"
 )
 

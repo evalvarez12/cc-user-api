@@ -6,8 +6,8 @@ import (
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
 	"log"
-	"upper.io/db.v2"
 	"time"
+	"upper.io/db.v2"
 )
 
 func GetSession(token string) (userID uint, jti string, err error) {
@@ -18,7 +18,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 
 	userID = uint(claims["id"].(float64))
 	var user models.User
-	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
 	if err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 		return
 	}
 
-	if !user.ContainsJTI(claims["jti"].(string))  {
+	if !user.ContainsJTI(claims["jti"].(string)) {
 		err = errors.New("Non existant session")
 		return
 	}
@@ -55,7 +55,7 @@ func Add(user models.User) (userID uint, err error) {
 }
 
 func Delete(userID uint) (err error) {
-	err = userSource.Find(db.Cond{"user_id" : userID}).Delete()
+	err = userSource.Find(db.Cond{"user_id": userID}).Delete()
 	return
 }
 
@@ -101,7 +101,7 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 
 func Logout(userID uint, jti string) (err error) {
 	var user models.User
-	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
 	if err != nil {
 		return
 	}
@@ -110,13 +110,13 @@ func Logout(userID uint, jti string) (err error) {
 	user.RemoveJTI(jti)
 
 	user.MarshalDB()
-	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
 }
 
 func LogoutAll(userID uint) (err error) {
 	var user models.User
-	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
 	if err != nil {
 		return
 	}
@@ -125,41 +125,31 @@ func LogoutAll(userID uint) (err error) {
 	user.ClearAllJTI()
 
 	user.MarshalDB()
-	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
 }
 
 func UpdateAnswers(userID uint, answers models.Answers) (err error) {
 	var user models.User
-	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
 	if err != nil {
 		return
 	}
-	user.UnmarshalDB()
+	// user.UnmarshalDB()
 
 	user.Answers = answers.Answers
 
-	user.MarshalDB()
-	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
+	// user.MarshalDB()
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
 }
 
 func Update(userID uint, userNew models.User) (err error) {
-	var user models.User
-	err = userSource.Find(db.Cond{"user_id" : userID}).One(&user)
-	if err != nil {
-		return
-	}
-	user.UnmarshalDB()
-
-	user = userNew
-
-	user.MarshalDB()
-	err = userSource.Find(db.Cond{"user_id" : userID}).Update(user)
+	userNew.UserID = userID
+	userNew.MarshalDB()
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(userNew)
 	return
 }
-
-
 
 func hashPassword(user *models.User) {
 	b := make([]byte, 10)
