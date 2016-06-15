@@ -10,6 +10,7 @@ POST    /user/login                            Users.Login
 GET     /user/logout                           Users.Logout
 GET     /user/logoutall                        Users.LogoutAll
 DELETE  /user                                  Users.Delete
+PUT     /user                                  Users.Update
 
 
 # Ignore favicon requests

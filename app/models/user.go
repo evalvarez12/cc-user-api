@@ -5,7 +5,6 @@ import (
 	"encoding/gob"
 	"github.com/jmoiron/sqlx/types"
 	"github.com/revel/revel"
-	"log"
 )
 
 type User struct {
@@ -95,5 +94,16 @@ func (u *User) UnmarshalDB() {
 	s := []string{}
 	gob.NewDecoder(buffer).Decode(&s)
 	u.ValidJTIs = s
-	log.Printf("%v", s)
+}
+
+func (u *User) Update(n User) {
+	if n.FirstName != "" {
+		u.FirstName = n.FirstName
+	}
+	if n.LastName != "" {
+		u.LastName = n.LastName
+	}
+	if n.Email != "" {
+		u.Email = n.Email
+	}
 }

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"time"
 	"upper.io/db.v2"
 )
@@ -83,7 +82,6 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 		return
 	}
 	user.AddJTI(token.Claims["jti"].(string))
-	log.Printf("%v", user.ValidJTIs)
 
 	user.MarshalDB()
 	err = userSource.Find("user_id", user.UserID).Update(user)
@@ -145,9 +143,13 @@ func UpdateAnswers(userID uint, answers models.Answers) (err error) {
 }
 
 func Update(userID uint, userNew models.User) (err error) {
-	userNew.UserID = userID
-	userNew.MarshalDB()
-	err = userSource.Find(db.Cond{"user_id": userID}).Update(userNew)
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	if err != nil {
+		return
+	}
+	user.Update(userNew)
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
 }
 

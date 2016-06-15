@@ -16,7 +16,7 @@ type AppTest struct {
 }
 
 type apiResult struct {
-	Success bool        `json:"succes"`
+	Success bool        `json:"success"`
 	Error   string      `json:"error,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 }
@@ -43,24 +43,35 @@ func myVERB(verb, path string, contentType string, reader io.Reader, token strin
 	return req
 }
 
-func testSuccess(t *AppTest, pass bool) {
+func testSuccess(t *AppTest, pass bool, errMessage string) {
 	var result apiResult
 	err := json.Unmarshal(t.ResponseBody, &result)
 	t.AssertEqual(err, nil)
 	t.AssertEqual(result.Success, pass)
+	if pass == false {
+		t.AssertEqual(result.Error, errMessage)
+	}
 }
 
 // --------------- TEST FUNCTIONS -------------
 
-func (t *AppTest) TestAdd() {
+func (t *AppTest) TestA_Add_SUCCESS() {
 	t.Post("/user", "application/json; charset=utf-8", strings.NewReader(userBody))
 	t.AssertOk()
-	// testSuccess(t, true)
 	t.AssertContentType("application/json; charset=utf-8")
 	log.Println(string(t.ResponseBody))
+	testSuccess(t, true, "")
 }
 
-func (t *AppTest) TestLogin() {
+func (t *AppTest) TestB_Add_ERROR_DuplicateEmail() {
+	t.Post("/user", "application/json; charset=utf-8", strings.NewReader(userBody))
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
+	testSuccess(t, false, "pq: duplicate key value violates unique constraint \"users_email_key\"")
+}
+
+func (t *AppTest) TestC_Login_SUCCESS() {
 	t.Post("/user/login", "application/json; charset=utf-8", strings.NewReader(loginBody))
 	buf := t.ResponseBody
 	var logRes apiResult
@@ -73,15 +84,63 @@ func (t *AppTest) TestLogin() {
 		log.Println(string(t.ResponseBody))
 		log.Println("Setting TOKEN to: " + token)
 	}
+	testSuccess(t, true, "")
 }
 
-func (t *AppTest) TestDelete() {
+func (t *AppTest) TestD_Login_ERROR_BadPassword() {
+	t.Post("/user/login", "application/json; charset=utf-8", strings.NewReader(loginBody_badPassword))
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
+	testSuccess(t, false, "Incorrect Password or UserName")
+}
+
+func (t *AppTest) TestD_Login_ERROR_BadEmail() {
+	t.Post("/user/login", "application/json; charset=utf-8", strings.NewReader(loginBody_badEmail))
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
+	testSuccess(t, false, "Incorrect Password or UserName")
+}
+
+func (t *AppTest) TestE1_Update_SUCCESS() {
+	req := myVERB("PUT", "/user", "application/json; charset=utf-8", strings.NewReader(userBody_update), token, t)
+	t.NewTestRequest(req).Send()
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
+	testSuccess(t, true, "")
+}
+
+func (t *AppTest) TestE_UserLogout_SUCCESS() {
+	req := myVERB("GET", "/user/logout", "", nil, token, t)
+	t.NewTestRequest(req).Send()
+	log.Println(string(t.ResponseBody))
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	testSuccess(t, true, "")
+}
+
+func (t *AppTest) TestF_UserLogout_ERROR_NoSession() {
+	req := myVERB("GET", "/user/logout", "", nil, token, t)
+	t.NewTestRequest(req).Send()
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
+	testSuccess(t, false, "Non existant session")
+}
+
+func (t *AppTest) TestG_UserLogin_SUCCESS() {
+	t.TestC_Login_SUCCESS()
+}
+
+func (t *AppTest) TestH_Delete_SUCCESS() {
 	req := myVERB("DELETE", "/user", "", nil, token, t)
 	t.NewTestRequest(req).Send()
 	t.AssertOk()
-	// testSuccess(t, true)
 	t.AssertContentType("application/json; charset=utf-8")
 	log.Println(string(t.ResponseBody))
+	testSuccess(t, true, "")
 }
 
 func (t *AppTest) Before() {
