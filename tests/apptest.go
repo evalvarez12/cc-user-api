@@ -112,6 +112,15 @@ func (t *AppTest) TestE1_Update_SUCCESS() {
 	testSuccess(t, true, "")
 }
 
+func (t *AppTest) TestE2_UpdateAnswers_SUCCESS() {
+	req := myVERB("PUT", "/user/answers", "application/json; charset=utf-8", strings.NewReader(answers_update), token, t)
+	t.NewTestRequest(req).Send()
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
+	testSuccess(t, true, "")
+}
+
 func (t *AppTest) TestE_UserLogout_SUCCESS() {
 	req := myVERB("GET", "/user/logout", "", nil, token, t)
 	t.NewTestRequest(req).Send()

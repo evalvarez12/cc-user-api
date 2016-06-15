@@ -134,9 +134,7 @@ func UpdateAnswers(userID uint, answers models.Answers) (err error) {
 		return
 	}
 	// user.UnmarshalDB()
-
 	user.Answers = answers.Answers
-
 	// user.MarshalDB()
 	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return

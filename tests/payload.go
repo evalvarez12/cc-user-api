@@ -27,3 +27,7 @@ var loginBody_badPassword = `{
   "email": "juanp@test.testy",
   "password": "juanito2"
 }`
+
+var answers_update = `{
+  "answers" : {"city" : "GDL", "money" : "none", "CO2" : "lots"}
+}`
