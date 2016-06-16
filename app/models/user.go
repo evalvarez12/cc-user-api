@@ -32,6 +32,10 @@ type Answers struct {
 	Answers types.JSONText `json:"answers"`
 }
 
+type Email struct {
+	Email string `json:"email"`
+}
+
 func (user *User) Validate(v *revel.Validation) {
 	v.Required(user.FirstName)
 	v.MinSize(user.FirstName, 4)

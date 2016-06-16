@@ -151,18 +151,53 @@ func Update(userID uint, userNew models.User) (err error) {
 	return
 }
 
-func PassResetRequest(userID uint) (err error) {
+func PassResetRequest(email string) (err error) {
 	var user models.User
-	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	err = userSource.Find(db.Cond{"email": email}).One(&user)
 	if err != nil {
 		return
 	}
 	token := hashReset(&user)
-	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
+	err = userSource.Find(db.Cond{"user_id": user.UserID}).Update(user)
 	if err != nil {
 		return
 	}
 	// service.SendResetMail(token)
+	return
+}
+
+func PassResetConfirm(token, password string) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"email": email}).One(&user)
+	if err != nil {
+		return
+	}
+	user.UnmarshalDB()
+	if user.ResetExpiration.After(time.Now()) {
+		var nilByte []byte
+		var nilTime time.Time
+		user.ResetHash = nilByte
+		user.ResetExpiration = nilTime
+		err = errors.New("Password reset expired")
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.ResetHash, []byte(token))
+	if err != nil {
+		err = errors.New("Corrupt reset token")
+		return err
+	}
+
+	user.Password = password
+	hashPassword(&user)
+
+	user.ClearAllJTI()
+
+	user.MarshalDB()
+	err = userSource.Find(db.Cond{"user_id": user.UserID}).Update(user)
+	if err != nil {
+		return
+	}
 	return
 }
 

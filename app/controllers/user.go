@@ -138,8 +138,28 @@ func (c Users) Update() revel.Result {
 	return c.OK()
 }
 
-func (c Users) PassResetRequest(userID uint) revel.Result {
-	err := ds.PassResetRequest(userID)
+func (c Users) PassResetRequest() revel.Result {
+	var email models.Email
+	err = json.Unmarshal(body, &email)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	err := ds.PassResetRequest(email.Email)
+	if err != nil {
+		return c.Error(err)
+	}
+	return c.OK()
+}
+
+func (c Users) PassResetConfirm(userID uint, token string) revel.Result {
+	var reset models.PassReset
+	err = json.Unmarshal(body, &reset)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	err := ds.PassResetConfirm(token, reset.Password)
 	if err != nil {
 		return c.Error(err)
 	}
