@@ -151,6 +151,21 @@ func Update(userID uint, userNew models.User) (err error) {
 	return
 }
 
+func PassResetRequest(userID uint) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	if err != nil {
+		return
+	}
+	token := hashReset(&user)
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
+	if err != nil {
+		return
+	}
+	// service.SendResetMail(token)
+	return
+}
+
 func hashPassword(user *models.User) {
 	b := make([]byte, 10)
 	_, err := rand.Read(b)
@@ -159,4 +174,15 @@ func hashPassword(user *models.User) {
 		panic(err)
 	}
 	user.Salt = b
+}
+
+func hashReset(user *models.User) (token string) {
+	token = randString(10)
+	var err error
+	user.ResetHash, err = bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+	user.ResetExpiration = time.Now().Add(time.Minute * 5)
+	return
 }

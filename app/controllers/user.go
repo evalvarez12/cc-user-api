@@ -137,3 +137,11 @@ func (c Users) Update() revel.Result {
 	}
 	return c.OK()
 }
+
+func (c Users) PassResetRequest(userID uint) revel.Result {
+	err := ds.PassResetRequest(userID)
+	if err != nil {
+		return c.Error(err)
+	}
+	return c.OK()
+}
