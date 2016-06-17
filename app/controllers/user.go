@@ -159,7 +159,7 @@ func (c Users) PassResetConfirm(userID uint, token string) revel.Result {
 		return c.Error(err)
 	}
 
-	err := ds.PassResetConfirm(token, reset.Password)
+	err := ds.PassResetConfirm(userID, token, reset.Password)
 	if err != nil {
 		return c.Error(err)
 	}

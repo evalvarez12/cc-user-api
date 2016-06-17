@@ -166,18 +166,16 @@ func PassResetRequest(email string) (err error) {
 	return
 }
 
-func PassResetConfirm(token, password string) (err error) {
+func PassResetConfirm(userID, token, password string) (err error) {
 	var user models.User
-	err = userSource.Find(db.Cond{"email": email}).One(&user)
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
 	if err != nil {
 		return
 	}
 	user.UnmarshalDB()
 	if user.ResetExpiration.After(time.Now()) {
-		var nilByte []byte
-		var nilTime time.Time
-		user.ResetHash = nilByte
-		user.ResetExpiration = nilTime
+		user.ResetHash = []byte{}
+		user.ResetExpiration = time.Time{}
 		err = errors.New("Password reset expired")
 		return
 	}
@@ -192,6 +190,8 @@ func PassResetConfirm(token, password string) (err error) {
 	hashPassword(&user)
 
 	user.ClearAllJTI()
+	user.ResetHash = []byte{}
+	user.ResetExpiration = time.Time{}
 
 	user.MarshalDB()
 	err = userSource.Find(db.Cond{"user_id": user.UserID}).Update(user)
