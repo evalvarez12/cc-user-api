@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"net/url"
 )
 
 var client = &http.Client{}
@@ -29,18 +30,16 @@ type transmissionApI struct {
 	SubstitutionData map[string]string `json:"substitution_data"`
 }
 
-func betaMail(mail, name string) (result []byte, err error) {
-	data := make(map[string]string)
+func templateMail(template, address string, data map[string]string) (result []byte, err error) {
 	recipients := []recipientAPI{
 		recipientAPI{
-			Address: mail,
+			Address: address,
 		},
 	}
-	data["name"] = name
 	request := transmissionApI{
 		Recipients: recipients,
 		Content: contentAPI{
-			TemplateID: "new-user-beta",
+			TemplateID: template,
 		},
 		SubstitutionData: data,
 	}
@@ -48,8 +47,8 @@ func betaMail(mail, name string) (result []byte, err error) {
 	return
 }
 
-func SendMail(mail, name string) (err error) {
-	result, err := betaMail(mail, name)
+func SendMail(template, address string, data map[string]string) (err error) {
+	result, err := betaMail(template, address, name)
 	if err != nil {
 		return
 	}
@@ -68,4 +67,16 @@ func SendMail(mail, name string) (err error) {
 		return
 	}
 	return
+}
+
+func PassResetURL(userID uint, token string) (uri string) {
+	u := url.URL
+	u.Scheme = "http"
+	u.Host = "host"
+	u.Path = "/user/reset"
+	q := u.Query()
+	q.Set("id", userID)
+	q.Set("token", token)
+	u.RawQuery = q.Encode()
+	return u.String()
 }
