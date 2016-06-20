@@ -152,14 +152,14 @@ func (c Users) PassResetRequest() revel.Result {
 	return c.OK()
 }
 
-func (c Users) PassResetConfirm(userID uint, token string) revel.Result {
+func (c Users) PassResetConfirm() revel.Result {
 	var reset models.PassReset
 	err = json.Unmarshal(body, &reset)
 	if err != nil {
 		return c.Error(err)
 	}
 
-	err := ds.PassResetConfirm(userID, token, reset.Password)
+	err := ds.PassResetConfirm(reset.UserID, reset.Token, reset.Password)
 	if err != nil {
 		return c.Error(err)
 	}

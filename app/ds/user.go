@@ -162,7 +162,7 @@ func PassResetRequest(email string) (err error) {
 	if err != nil {
 		return
 	}
-	// service.SendResetMail(token)
+	err = service.SendMail("pass-reset", user.UserID, token)
 	return
 }
 

@@ -36,6 +36,12 @@ type Email struct {
 	Email string `json:"email"`
 }
 
+type PassReset struct {
+	UserID   uint   `json:"user_id"`
+	Password string `json:"email"`
+	Token    string `json:"token"`
+}
+
 func (user *User) Validate(v *revel.Validation) {
 	v.Required(user.FirstName)
 	v.MinSize(user.FirstName, 4)

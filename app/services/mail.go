@@ -48,6 +48,12 @@ func templateMail(template, address string, data map[string]string) (result []by
 }
 
 func SendMail(template, address string, data map[string]string) (err error) {
+	// Skip send during development
+	if template == "pass-reset" {
+		return
+	}
+	// ----------------------------
+
 	result, err := betaMail(template, address, name)
 	if err != nil {
 		return
