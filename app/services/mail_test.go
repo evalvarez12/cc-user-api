@@ -6,8 +6,9 @@ import (
 	"testing"
 )
 
-func TestTemplateMail(t *testing.T) {
-	res, err := templateMail("eduardo@mazing.studio", "prueba")
+func TestBetaMail(t *testing.T) {
+	data := map[string]string{"name": "prueba"}
+	res, err := templateMail("new-user-beta", "eduardo@mazing.studio", data)
 	if err != nil {
 		log.Print(err)
 	}
@@ -15,7 +16,8 @@ func TestTemplateMail(t *testing.T) {
 }
 
 func TestSendMail(t *testing.T) {
-	err := SendMail("eduardo@mazing.studio", "prueba")
+	data := map[string]string{"name": "prueba"}
+	err := SendMail("new-user-beta", "eduardo@mazing.studio", data)
 	if err != nil {
 		log.Print(err)
 	}

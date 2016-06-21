@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/url"
 )
 
 var client = &http.Client{}
@@ -54,7 +53,7 @@ func SendMail(template, address string, data map[string]string) (err error) {
 	}
 	// ----------------------------
 
-	result, err := betaMail(template, address, name)
+	result, err := templateMail(template, address, data)
 	if err != nil {
 		return
 	}
@@ -73,16 +72,4 @@ func SendMail(template, address string, data map[string]string) (err error) {
 		return
 	}
 	return
-}
-
-func PassResetURL(userID uint, token string) (uri string) {
-	u := url.URL
-	u.Scheme = "http"
-	u.Host = "host"
-	u.Path = "/user/reset"
-	q := u.Query()
-	q.Set("id", userID)
-	q.Set("token", token)
-	u.RawQuery = q.Encode()
-	return u.String()
 }

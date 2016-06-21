@@ -151,22 +151,19 @@ func Update(userID uint, userNew models.User) (err error) {
 	return
 }
 
-func PassResetRequest(email string) (err error) {
+func PassResetRequest(email string) (userID uint, token string, err error) {
 	var user models.User
 	err = userSource.Find(db.Cond{"email": email}).One(&user)
 	if err != nil {
 		return
 	}
-	token := hashReset(&user)
+	token = hashReset(&user)
+	userID = user.UserID
 	err = userSource.Find(db.Cond{"user_id": user.UserID}).Update(user)
-	if err != nil {
-		return
-	}
-	err = service.SendMail("pass-reset", user.UserID, token)
 	return
 }
 
-func PassResetConfirm(userID, token, password string) (err error) {
+func PassResetConfirm(userID uint, token, password string) (err error) {
 	var user models.User
 	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
 	if err != nil {

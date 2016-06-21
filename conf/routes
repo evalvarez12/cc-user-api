@@ -12,6 +12,8 @@ GET     /user/logoutall                        Users.LogoutAll
 DELETE  /user                                  Users.Delete
 PUT     /user                                  Users.Update
 PUT     /user/answers                          Users.UpdateAnswers
+POST    /user/resetreq                         Users.PassResetRequest
+POST    /user/reset                            Users.PassResetConfirm
 
 
 # Ignore favicon requests

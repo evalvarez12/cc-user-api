@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"github.com/evalvarez12/cc-user-api/app/ds"
 	"github.com/evalvarez12/cc-user-api/app/models"
+	"github.com/evalvarez12/cc-user-api/app/services"
 	"github.com/revel/revel"
 	"io/ioutil"
+	"net/url"
+	"strconv"
 )
 
 type Users struct {
@@ -139,13 +142,24 @@ func (c Users) Update() revel.Result {
 }
 
 func (c Users) PassResetRequest() revel.Result {
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		return c.Error(err)
+	}
+
 	var email models.Email
 	err = json.Unmarshal(body, &email)
 	if err != nil {
 		return c.Error(err)
 	}
 
-	err := ds.PassResetRequest(email.Email)
+	userID, token, err := ds.PassResetRequest(email.Email)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	data := map[string]string{"link": PasswordResetURL(userID, token)}
+	err = services.SendMail("passwords-reset", email.Email, data)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -153,15 +167,33 @@ func (c Users) PassResetRequest() revel.Result {
 }
 
 func (c Users) PassResetConfirm() revel.Result {
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		return c.Error(err)
+	}
+
 	var reset models.PassReset
 	err = json.Unmarshal(body, &reset)
 	if err != nil {
 		return c.Error(err)
 	}
 
-	err := ds.PassResetConfirm(reset.UserID, reset.Token, reset.Password)
+	err = ds.PassResetConfirm(reset.UserID, reset.Token, reset.Password)
 	if err != nil {
 		return c.Error(err)
 	}
 	return c.OK()
+}
+
+
+func PasswordResetURL(userID uint, token string) (uri string) {
+	u := url.URL{}
+	u.Scheme = "http"
+	u.Host = "host"
+	u.Path = "/user/reset"
+	q := u.Query()
+	q.Set("id", strconv.Itoa(int(userID)))
+	q.Set("token", token)
+	u.RawQuery = q.Encode()
+	return u.String()
 }
