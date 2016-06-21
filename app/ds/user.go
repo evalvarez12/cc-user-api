@@ -90,9 +90,11 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 	}
 
 	login = map[string]interface{}{
-		"name":  user.FirstName,
-		"email": user.Email,
-		"token": sToken,
+		"name":    user.FirstName,
+		"email":   user.Email,
+		"token":   sToken,
+		"user_id": user.UserID,
+		"answers": user.Answers,
 	}
 	return
 }
