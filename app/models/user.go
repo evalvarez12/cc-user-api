@@ -87,6 +87,9 @@ func (u *User) MarshalDB() {
 	buffer := &bytes.Buffer{}
 	gob.NewEncoder(buffer).Encode(u.ValidJTIs)
 	u.ValidJTI = buffer.Bytes()
+	if u.Answers == nil {
+		u.Answers = types.JSONText("{}")
+	}
 }
 
 func (u *User) UnmarshalDB() {

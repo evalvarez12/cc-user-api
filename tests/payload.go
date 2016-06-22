@@ -4,14 +4,13 @@ var userBody = `{
   "first_name": "Juan",
   "last_name" : "Perez",
   "email" : "juanp@test.testy",
-  "password": "juanito",
-  "answers" : {"city" : "CDMX", "money" : "lots"}
+  "password": "juanito"
 }`
 
 var userBody_update = `{
   "first_name": "Juanito",
   "last_name" : "Perezin"
- }`
+}`
 
 var loginBody = `{
   "email": "juanp@test.testy",
