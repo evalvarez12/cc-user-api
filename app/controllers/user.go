@@ -166,19 +166,8 @@ func (c Users) PassResetRequest() revel.Result {
 	return c.OK()
 }
 
-func (c Users) PassResetConfirm() revel.Result {
-	body, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		return c.Error(err)
-	}
-
-	var reset models.PassReset
-	err = json.Unmarshal(body, &reset)
-	if err != nil {
-		return c.Error(err)
-	}
-
-	err = ds.PassResetConfirm(reset.UserID, reset.Token, reset.Password)
+func (c Users) PassResetConfirm(userID uint, token, password string) revel.Result {
+	err := ds.PassResetConfirm(userID, token, password)
 	if err != nil {
 		return c.Error(err)
 	}
