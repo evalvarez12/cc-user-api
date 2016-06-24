@@ -153,6 +153,53 @@ func Update(userID uint, userNew models.User) (err error) {
 	return
 }
 
+func PassResetRequest(email string) (userID uint, token string, err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"email": email}).One(&user)
+	if err != nil {
+		return
+	}
+	token = hashReset(&user)
+	userID = user.UserID
+	err = userSource.Find(db.Cond{"user_id": user.UserID}).Update(user)
+	return
+}
+
+func PassResetConfirm(userID uint, token, password string) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	if err != nil {
+		return
+	}
+	user.UnmarshalDB()
+	if user.ResetExpiration.After(time.Now()) {
+		user.ResetHash = []byte{}
+		user.ResetExpiration = time.Time{}
+		err = errors.New("Password reset expired")
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.ResetHash, []byte(token))
+	if err != nil {
+		err = errors.New("Corrupt reset token")
+		return err
+	}
+
+	user.Password = password
+	hashPassword(&user)
+
+	user.ClearAllJTI()
+	user.ResetHash = []byte{}
+	user.ResetExpiration = time.Time{}
+
+	user.MarshalDB()
+	err = userSource.Find(db.Cond{"user_id": user.UserID}).Update(user)
+	if err != nil {
+		return
+	}
+	return
+}
+
 func hashPassword(user *models.User) {
 	b := make([]byte, 10)
 	_, err := rand.Read(b)
@@ -161,4 +208,15 @@ func hashPassword(user *models.User) {
 		panic(err)
 	}
 	user.Salt = b
+}
+
+func hashReset(user *models.User) (token string) {
+	token = randString(10)
+	var err error
+	user.ResetHash, err = bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+	user.ResetExpiration = time.Now().Add(time.Minute * 5)
+	return
 }

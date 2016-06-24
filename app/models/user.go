@@ -5,19 +5,22 @@ import (
 	"encoding/gob"
 	"github.com/jmoiron/sqlx/types"
 	"github.com/revel/revel"
+	"time"
 )
 
 type User struct {
-	UserID    uint           `json:"user_id" db:"user_id,omitempty"`
-	FirstName string         `json:"first_name" db:"fist_name"`
-	LastName  string         `json:"last_name" db:"last_name"`
-	Password  string         `json:"password" db:"-"`
-	Hash      []byte         `json:"-" db:"hash"`
-	Salt      []byte         `json:"-" db:"salt"`
-	Email     string         `json:"email" db:"email"`
-	ValidJTIs []string       `json:"-" db:"-"`
-	ValidJTI  []byte         `json:"-" db:"valid_jti"`
-	Answers   types.JSONText `json:"answers" db:"answers"`
+	UserID          uint           `json:"user_id" db:"user_id,omitempty"`
+	FirstName       string         `json:"first_name" db:"fist_name"`
+	LastName        string         `json:"last_name" db:"last_name"`
+	Password        string         `json:"password" db:"-"`
+	Hash            []byte         `json:"-" db:"hash"`
+	Salt            []byte         `json:"-" db:"salt"`
+	Email           string         `json:"email" db:"email"`
+	ValidJTIs       []string       `json:"-" db:"-"`
+	ValidJTI        []byte         `json:"-" db:"valid_jti"`
+	Answers         types.JSONText `json:"answers" db:"answers"`
+	ResetHash       []byte         `json:"-" db:"reset_hash"`
+	ResetExpiration time.Time      `json:"-" db:"reset_expiration"`
 }
 
 type UserLogin struct {
@@ -27,6 +30,10 @@ type UserLogin struct {
 
 type Answers struct {
 	Answers types.JSONText `json:"answers"`
+}
+
+type Email struct {
+	Email string `json:"email"`
 }
 
 func (user *User) Validate(v *revel.Validation) {

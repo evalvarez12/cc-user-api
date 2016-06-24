@@ -12,5 +12,7 @@ CREATE TABLE "users" (
     "hash"            BYTEA,
     "salt"            BYTEA,
     "valid_jti"       BYTEA,
-    "answers"         JSONB
+    "answers"         JSONB,
+    "reset_hash"       BYTEA,
+    "reset_expiration" TIMESTAMP
 );
