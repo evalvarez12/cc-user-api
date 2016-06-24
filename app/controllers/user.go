@@ -174,7 +174,6 @@ func (c Users) PassResetConfirm(userID uint, token, password string) revel.Resul
 	return c.OK()
 }
 
-
 func PasswordResetURL(userID uint, token string) (uri string) {
 	u := url.URL{}
 	u.Scheme = "http"
