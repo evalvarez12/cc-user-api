@@ -164,8 +164,8 @@ func (c Users) PassResetRequest() revel.Result {
 	if err != nil {
 		return c.Error(err)
 	}
-
-	data := map[string]string{"link": PasswordResetURL(userID, token)}
+	host := strings.Split(c.Request.RemoteAddr, ":")[0]
+	data := map[string]string{"link": PasswordResetURL(userID, host, token)}
 	err = services.SendMail("passwords-reset", email.Email, data)
 	if err != nil {
 		return c.Error(err)
@@ -181,10 +181,10 @@ func (c Users) PassResetConfirm(userID uint, token, password string) revel.Resul
 	return c.OK()
 }
 
-func PasswordResetURL(userID uint, token string) (uri string) {
+func PasswordResetURL(userID uint, host, token string) (uri string) {
 	u := url.URL{}
 	u.Scheme = "http"
-	u.Host = "localhost:8082"
+	u.Host = host
 	u.Path = "/page/passreset"
 	q := u.Query()
 	q.Set("id", strconv.Itoa(int(userID)))
