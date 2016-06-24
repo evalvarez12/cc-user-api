@@ -1,0 +1,3 @@
+development:
+  driver: postgres
+  open: user=$CC_DBUSER dbname=$CC_DBNAME password=$CC_DBPASS

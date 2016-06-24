@@ -13,6 +13,8 @@ import (
 
 var client = &http.Client{}
 
+var apiKey string
+
 type contentAPI struct {
 	TemplateID string `json:"template_id"`
 }
@@ -27,6 +29,11 @@ type transmissionApI struct {
 	Recipients       []recipientAPI    `json:"recipients"`
 	Content          contentAPI        `json:"content"`
 	SubstitutionData map[string]string `json:"substitution_data"`
+}
+
+func init() {
+	apiKey = os.Getenv("CC_SPARKPOSTKEY")
+	// 	apiKey = "672c40cdb9bb75b6ccc81a9a080624877b516ca3"
 }
 
 func templateMail(template, address string, data map[string]string) (result []byte, err error) {
@@ -47,12 +54,6 @@ func templateMail(template, address string, data map[string]string) (result []by
 }
 
 func SendMail(template, address string, data map[string]string) (err error) {
-	// Skip send during development
-	if template == "pass-reset" {
-		return
-	}
-	// ----------------------------
-
 	result, err := templateMail(template, address, data)
 	if err != nil {
 		return
@@ -65,7 +66,7 @@ func SendMail(template, address string, data map[string]string) (err error) {
 
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Authorization", "672c40cdb9bb75b6ccc81a9a080624877b516ca3")
+	req.Header.Add("Authorization", apiKey)
 
 	_, err = client.Do(req)
 	if err != nil {

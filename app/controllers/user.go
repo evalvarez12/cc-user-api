@@ -79,6 +79,13 @@ func (c Users) Add() revel.Result {
 	if err != nil {
 		return c.Error(err)
 	}
+
+	data := map[string]string{"name": newUser.Name}
+	err = services.SendMail("new-user-beta", newUser.Email, data)
+	if err != nil {
+		return c.Error(err)
+	}
+
 	return c.Data(id)
 }
 
@@ -177,8 +184,8 @@ func (c Users) PassResetConfirm(userID uint, token, password string) revel.Resul
 func PasswordResetURL(userID uint, token string) (uri string) {
 	u := url.URL{}
 	u.Scheme = "http"
-	u.Host = "host"
-	u.Path = "/user/reset"
+	u.Host = "localhost:8082"
+	u.Path = "/page/passreset"
 	q := u.Query()
 	q.Set("id", strconv.Itoa(int(userID)))
 	q.Set("token", token)

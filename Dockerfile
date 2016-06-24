@@ -16,7 +16,8 @@ ENV GOPATH /go
 
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
-RUN go get github.com/revel/cmd/revel
+RUN go get github.com/revel/cmd/revel &&\
+    go get bitbucket.org/liamstask/goose/cmd/goose
 
 RUN mkdir /go/src/github.com/evalvarez12 &&\
     mkdir /go/src/github.com/evalvarez12/cc-user-api

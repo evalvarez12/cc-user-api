@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/evalvarez12/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
+	"os"
 	"time"
 	"upper.io/db.v2"
 )
@@ -77,7 +78,8 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 		return
 	}
 
-	sToken, err := token.SignedString([]byte("pl8IKa8Wz5tu64JuV3ksSQ7YVyDDjet17jE5YXS37lIasCxjhYlHjYYGnNT9Gzs"))
+	// sToken, err := token.SignedString([]byte("pl8IKa8Wz5tu64JuV3ksSQ7YVyDDjet17jE5YXS37lIasCxjhYlHjYYGnNT9Gzs"))
+	sToken, err := token.SignedString([]byte(os.Getenv("CC_JWTSIGN")))
 	if err != nil {
 		return
 	}

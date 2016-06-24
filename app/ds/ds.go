@@ -19,23 +19,11 @@ var (
 )
 
 func init() {
-	// Name of the linked repo
-	log.Printf("Database Container Name: %s", os.Getenv("POSTGRES_NAME"))
-
-	// Obtener la direccion de la DBs
-	dbAddress := os.Getenv("POSTGRES_PORT_5432_TCP_ADDR")
-	if dbAddress == "" {
-		log.Printf("ERROR LINKING CONTAINERS")
-		// For testing on local machine
-		dbAddress = "localhost"
-	}
-	log.Printf("Database Container Address: %s", dbAddress)
-
 	settings := postgresql.ConnectionURL{
-		Database: `cc_users`,
-		Host:     dbAddress,
-		User:     `cc`,
-		Password: `pass`,
+		Database: os.Getenv("CC_DBNAME"),
+		Host:     os.Getenv("CC_DBADDRESS"),
+		User:     os.Getenv("CC_DBUSER"),
+		Password: os.Getenv("CC_DBPASS"),
 	}
 
 	// Conexion a la DB y comunicarse con las tables

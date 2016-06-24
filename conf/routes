@@ -15,7 +15,7 @@ PUT     /user/answers                          Users.UpdateAnswers
 POST    /user/resetreq                         Users.PassResetRequest
 POST    /user/reset                            Users.PassResetConfirm
 
-POST    /page/passwordreset                    Page.PasswordReset
+POST    /page/passreset                        Page.PasswordReset
 
 
 # Ignore favicon requests
