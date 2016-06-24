@@ -19,6 +19,7 @@ var (
 )
 
 func init() {
+	log.Println("CCUSER", os.Getenv("CC_DBUSER"))
 	settings := postgresql.ConnectionURL{
 		Database: os.Getenv("CC_DBNAME"),
 		Host:     os.Getenv("CC_DBADDRESS"),

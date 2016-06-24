@@ -80,7 +80,7 @@ func (c Users) Add() revel.Result {
 		return c.Error(err)
 	}
 
-	data := map[string]string{"name": newUser.Name}
+	data := map[string]string{"name": newUser.FirstName}
 	err = services.SendMail("new-user-beta", newUser.Email, data)
 	if err != nil {
 		return c.Error(err)
@@ -164,8 +164,8 @@ func (c Users) PassResetRequest() revel.Result {
 	if err != nil {
 		return c.Error(err)
 	}
-	host := strings.Split(c.Request.RemoteAddr, ":")[0]
-	data := map[string]string{"link": PasswordResetURL(userID, host, token)}
+
+	data := map[string]string{"link": PasswordResetURL(userID, token)}
 	err = services.SendMail("passwords-reset", email.Email, data)
 	if err != nil {
 		return c.Error(err)
@@ -181,7 +181,13 @@ func (c Users) PassResetConfirm(userID uint, token, password string) revel.Resul
 	return c.OK()
 }
 
-func PasswordResetURL(userID uint, host, token string) (uri string) {
+func PasswordResetURL(userID uint, token string) (uri string) {
+	var host string
+	if revel.Server.Addr[0] == ':' {
+		host = "127.0.0.1" + revel.Server.Addr
+	} else {
+		host = revel.Server.Addr
+	}
 	u := url.URL{}
 	u.Scheme = "http"
 	u.Host = host
