@@ -42,7 +42,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 	return
 }
 
-func Add(user models.User) (userID uint, err error) {
+func Add(user models.User) (login map[string]interface{}, err error) {
 	hashPassword(&user)
 
 	user.MarshalDB()
@@ -50,7 +50,30 @@ func Add(user models.User) (userID uint, err error) {
 	if err != nil {
 		return
 	}
-	userID = uint(temp.(int64))
+	userID := uint(temp.(int64))
+
+	token, err := newToken(userID)
+	if err != nil {
+		return
+	}
+
+	sToken, err := token.SignedString([]byte(os.Getenv("CC_JWTSIGN")))
+	if err != nil {
+		return
+	}
+	user.AddJTI(token.Claims["jti"].(string))
+
+	user.MarshalDB()
+	err = userSource.Find("user_id", userID).Update(user)
+	if err != nil {
+		return
+	}
+
+	login = map[string]interface{}{
+		"name":    user.FirstName,
+		"token":   sToken,
+		"answers": user.Answers.String(),
+	}
 	return
 }
 
@@ -78,7 +101,6 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 		return
 	}
 
-	// sToken, err := token.SignedString([]byte("pl8IKa8Wz5tu64JuV3ksSQ7YVyDDjet17jE5YXS37lIasCxjhYlHjYYGnNT9Gzs"))
 	sToken, err := token.SignedString([]byte(os.Getenv("CC_JWTSIGN")))
 	if err != nil {
 		return
@@ -93,9 +115,7 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 
 	login = map[string]interface{}{
 		"name":    user.FirstName,
-		"email":   user.Email,
 		"token":   sToken,
-		"user_id": user.UserID,
 		"answers": user.Answers.String(),
 	}
 	return

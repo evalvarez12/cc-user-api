@@ -75,7 +75,7 @@ func (c Users) Add() revel.Result {
 		return c.ErrorData(errors)
 	}
 
-	id, err := ds.Add(newUser)
+	login, err := ds.Add(newUser)
 	if err != nil {
 		return c.Error(err)
 	}
@@ -86,7 +86,7 @@ func (c Users) Add() revel.Result {
 		return c.Error(err)
 	}
 
-	return c.Data(id)
+	return c.Data(login)
 }
 
 func (c Users) Delete() revel.Result {
