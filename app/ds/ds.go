@@ -19,10 +19,11 @@ var (
 )
 
 func init() {
-	log.Println("CCUSER", os.Getenv("CC_DBUSER"))
+	log.Println("DB ADDRESS: ", os.Getenv("CC_DBADDRESS"))
+	host := os.Getenv("CC_DBADDRESS")
 	settings := postgresql.ConnectionURL{
 		Database: os.Getenv("CC_DBNAME"),
-		Host:     os.Getenv("CC_DBADDRESS"),
+		Host:     host,
 		User:     os.Getenv("CC_DBUSER"),
 		Password: os.Getenv("CC_DBPASS"),
 	}
@@ -30,9 +31,13 @@ func init() {
 	// Conexion a la DB y comunicarse con las tables
 	var err error
 	sess, err = postgresql.Open(settings)
-	// sess, err = db.Open(postgresql.Adapter, settings)
 	if err != nil {
-		log.Fatal("Session Open(): ", err)
+		log.Printf("Session Open Error: ", err)
+		settings.Host = os.Getenv("POSTGRES_PORT_5432_TCP_ADDR")
+		sess, err = postgresql.Open(settings)
+		if err != nil {
+			log.Fatal("Session Open Error: ", err)
+		}
 	}
 
 	userSource = sess.Collection("users")

@@ -16,8 +16,8 @@ database:
 		-p 127.0.0.1:15432:5432 \
 		--name postgres postgres:9.4.5 && \
 	sleep 10 && \
-	psql -h127.0.0.1 -p15432 -Upostgres -c "CREATE ROLE cc PASSWORD 'pass' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN" &&\
-	psql -h127.0.0.1 -p15432 -Upostgres -c "CREATE DATABASE cc_users" &&\
+	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE ROLE cc PASSWORD 'pass' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN" &&\
+	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE DATABASE cc_users"
 	cat sql/0000-init.sql | PGPASSWORD=pass psql -h127.0.0.1 -p15432 -Ucc cc_users
 
 database-shell:
