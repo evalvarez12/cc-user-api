@@ -11,6 +11,18 @@ make api
 
 *Address is 127.0.0.1:8082*
 
+Enviromental variables:
+```
+CC_DBNAME - Name of the postgres DB
+CC_DBUSER - Name of the postgres user
+CC_DBPASS - Password of the user
+CC_DBADDRESS - Address of the postgres service
+
+CC_JWTSIGN - A secret string to sing JWT
+
+CC_SPARKPOSTKEY - The key of the sparkpost app
+```
+
 ## End-points
 ### Success:
 ```
