@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/evalvarez12/cc-user-api/app/ds"
-	"github.com/evalvarez12/cc-user-api/app/models"
-	"github.com/evalvarez12/cc-user-api/app/services"
+	"github.com/arbolista-dev/cc-user-api/app/ds"
+	"github.com/arbolista-dev/cc-user-api/app/models"
+	"github.com/arbolista-dev/cc-user-api/app/services"
 	"github.com/revel/revel"
 	"io/ioutil"
 	"net/url"

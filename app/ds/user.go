@@ -3,7 +3,7 @@ package ds
 import (
 	"crypto/rand"
 	"errors"
-	"github.com/evalvarez12/cc-user-api/app/models"
+	"github.com/arbolista-dev/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"time"
