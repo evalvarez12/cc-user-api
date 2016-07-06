@@ -1,7 +1,7 @@
 package ds
 
 import (
-	"github.com/evalvarez12/cc-user-api/app/models"
+	"github.com/arbolista-dev/cc-user-api/app/models"
 	"log"
 	"testing"
 )
