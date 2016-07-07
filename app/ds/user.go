@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 	"upper.io/db.v2"
+	"github.com/lib/pq"
 )
 
 func GetSession(token string) (userID uint, jti string, err error) {
@@ -26,7 +27,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 	user.UnmarshalDB()
 
 	if time.Now().Unix() > int64(claims["exp"].(float64)) {
-		err = errors.New("Session expired")
+		err = errors.New(`{"session": "expired"}`)
 		user.RemoveJTI(claims["jti"].(string))
 		user.MarshalDB()
 		_ = userSource.Find(db.Cond{"user_id": userID}).Update(user)
@@ -34,7 +35,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 	}
 
 	if !user.ContainsJTI(claims["jti"].(string)) {
-		err = errors.New("Non existant session")
+		err = errors.New(`{"session": "non-existent"}`)
 		return
 	}
 
@@ -48,6 +49,11 @@ func Add(user models.User) (login map[string]interface{}, err error) {
 	user.MarshalDB()
 	temp, err := userSource.Insert(user)
 	if err != nil {
+		pqErr := err.(*pq.Error)
+		if pqErr.Code == "23505" {
+			err = errors.New(`{"email": "non-unique"}`)
+			return
+		}
 		return
 	}
 	userID := uint(temp.(int64))
@@ -86,14 +92,14 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 	var user models.User
 	err = userSource.Find("email", logRequest.Email).One(&user)
 	if err != nil {
-		err = errors.New("Incorrect Password or UserName")
+		err = errors.New(`{"email": "non-existent"}`)
 		return
 	}
 	user.UnmarshalDB()
 
 	err = bcrypt.CompareHashAndPassword(user.Hash, append([]byte(logRequest.Password), user.Salt...))
 	if err != nil {
-		err = errors.New("Incorrect Password or UserName")
+		err = errors.New(`{"password": "incorrect"}`)
 		return
 	}
 	token, err := newToken(user.UserID)
@@ -197,13 +203,13 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 	if user.ResetExpiration.After(time.Now()) {
 		user.ResetHash = []byte{}
 		user.ResetExpiration = time.Time{}
-		err = errors.New("Password reset expired")
+		err = errors.New(`{"password-reset": "expired"}`)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword(user.ResetHash, []byte(token))
 	if err != nil {
-		err = errors.New("Corrupt reset token")
+		err = errors.New(`{"reset-token": "corrupt"}`)
 		return err
 	}
 
