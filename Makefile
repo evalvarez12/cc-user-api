@@ -1,7 +1,7 @@
 #--------- RUN ON HOST -----------------
 # Get docker images
 reset-database:
-	cat sql/0000-init.sql | PGPASSWORD=pass psql -h localhost -Ucc cc_users
+	cat sql/0000-init.sql | PGPASSWORD=pass psql -h127.0.0.1 -p15432 -Ucc cc_users
 
 images:
 	docker pull postgres:9.4.5 && \
@@ -32,3 +32,6 @@ api:
 		--name user_api\
 		--link postgres \
 		cc:user_api
+
+update-api:
+	docker cp . user_api:/go/src/github.com/arbolista-dev/cc-user-api
