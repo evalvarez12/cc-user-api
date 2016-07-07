@@ -31,3 +31,6 @@ api:
 		--link postgres \
 		--env-file .env\
 		cc:user_api
+
+update-api:
+	docker cp . user_api:/go/src/github.com/arbolista-dev/cc-user-api
