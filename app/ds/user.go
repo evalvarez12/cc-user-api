@@ -50,9 +50,11 @@ func Add(user models.User) (login map[string]interface{}, err error) {
 	temp, err := userSource.Insert(user)
 	if err != nil {
 		pqErr := err.(*pq.Error)
-		if pqErr.Code == "23505" {
-			err = errors.New(`{"email": "non-unique"}`)
-			return
+		if pqErr != nil {
+			if pqErr.Code == "23505" {
+				err = errors.New(`{"email": "non-unique"}`)
+				return
+			}
 		}
 		return
 	}
@@ -165,6 +167,30 @@ func UpdateAnswers(userID uint, answers models.Answers) (err error) {
 	}
 	// user.UnmarshalDB()
 	user.Answers = answers.Answers
+	// user.MarshalDB()
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
+	return
+}
+
+func UpdateTotalFootprint(userID uint, totalFootprint float64) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	if err != nil {
+		return
+	}
+	user.TotalFootprint = totalFootprint
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
+	return
+}
+
+func SetLocation(userID uint, location models.Location) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	if err != nil {
+		return
+	}
+	// user.UnmarshalDB()
+	user.Location = location.Location
 	// user.MarshalDB()
 	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
