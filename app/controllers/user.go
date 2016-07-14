@@ -118,7 +118,47 @@ func (c Users) UpdateAnswers() revel.Result {
 		return c.Error(err)
 	}
 
+	var answersMap map[string]interface{}
+	err = json.Unmarshal([]byte(body), &answersMap)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	grandTotal := answersMap["answers"].(map[string]interface{})["result_grand_total"].(string)
+	grandTotalFloat, err := strconv.ParseFloat(grandTotal, 64)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	err = ds.UpdateTotalFootprint(userID, grandTotalFloat)
+	if err != nil {
+		return c.Error(err)
+	}
+
 	err = ds.UpdateAnswers(userID, bodyAnswers)
+	if err != nil {
+		return c.Error(err)
+	}
+	return c.OK()
+}
+
+func (c Users) SetLocation() revel.Result {
+	userID, _, err := c.GetSession()
+	if err != nil {
+		return c.Error(err)
+	}
+
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		return c.Error(err)
+	}
+	var bodyLocation models.Location
+	err = json.Unmarshal(body, &bodyLocation)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	err = ds.SetLocation(userID, bodyLocation)
 	if err != nil {
 		return c.Error(err)
 	}

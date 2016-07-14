@@ -13,6 +13,9 @@ CREATE TABLE "users" (
     "salt"            BYTEA,
     "valid_jti"       BYTEA,
     "answers"         JSONB,
+    "public"          BOOLEAN,
+    "location"        JSONB,
+    "total_footprint" REAL,
     "reset_hash"       BYTEA,
     "reset_expiration" TIMESTAMP
 );

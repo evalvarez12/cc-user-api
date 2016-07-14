@@ -19,6 +19,9 @@ type User struct {
 	ValidJTIs       []string       `json:"-" db:"-"`
 	ValidJTI        []byte         `json:"-" db:"valid_jti"`
 	Answers         types.JSONText `json:"answers" db:"answers"`
+	Public					bool				 	 `json:"public" db:"public"`
+	Location				types.JSONText `json:"location" db:"location"`
+	TotalFootprint	float64				 `json:"" db:"total_footprint"`
 	ResetHash       []byte         `json:"-" db:"reset_hash"`
 	ResetExpiration time.Time      `json:"-" db:"reset_expiration"`
 }
@@ -30,6 +33,10 @@ type UserLogin struct {
 
 type Answers struct {
 	Answers types.JSONText `json:"answers"`
+}
+
+type Location struct {
+	Location types.JSONText `json:"location"`
 }
 
 type Email struct {
@@ -96,6 +103,9 @@ func (u *User) MarshalDB() {
 	u.ValidJTI = buffer.Bytes()
 	if u.Answers == nil {
 		u.Answers = types.JSONText("{}")
+	}
+	if u.Location == nil {
+		u.Location = types.JSONText("{}")
 	}
 }
 

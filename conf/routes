@@ -12,6 +12,7 @@ GET     /user/logoutall                        Users.LogoutAll
 DELETE  /user                                  Users.Delete
 PUT     /user                                  Users.Update
 PUT     /user/answers                          Users.UpdateAnswers
+PUT     /user/location                         Users.SetLocation
 POST    /user/reset/req                        Users.PassResetRequest
 POST    /user/reset                            Users.PassResetConfirm
 
