@@ -10,7 +10,7 @@ import (
 
 type User struct {
 	UserID          uint           `json:"user_id" db:"user_id,omitempty"`
-	FirstName       string         `json:"first_name" db:"fist_name"`
+	FirstName       string         `json:"first_name" db:"first_name"`
 	LastName        string         `json:"last_name" db:"last_name"`
 	Password        string         `json:"password" db:"-"`
 	Hash            []byte         `json:"-" db:"hash"`
