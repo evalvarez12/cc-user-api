@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS "users";
 CREATE TABLE "users" (
     "user_id"         SERIAL PRIMARY KEY,
     "email"           VARCHAR(80) UNIQUE,
-    "fist_name"       VARCHAR(80),
+    "first_name"      VARCHAR(80),
     "last_name"       VARCHAR(80),
     "hash"            BYTEA,
     "salt"            BYTEA,
@@ -19,3 +19,5 @@ CREATE TABLE "users" (
     "reset_hash"       BYTEA,
     "reset_expiration" TIMESTAMP
 );
+
+CREATE INDEX leaders_public_footprint_index ON users(first_name, last_name, total_footprint, location) WHERE public IS TRUE AND total_footprint IS NOT NULL;
