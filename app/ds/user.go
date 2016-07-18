@@ -254,6 +254,17 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 	return
 }
 
+func ListLeaders(offset string) (leadersList []models.LeadersList, err error) {
+	q := userSource.Find().Select("first_name", "last_name", "total_footprint", "location").Where("public IS TRUE AND total_footprint IS NOT NULL")
+
+	err = q.All(&leadersList)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 func hashPassword(user *models.User) {
 	b := make([]byte, 10)
 	_, err := rand.Read(b)

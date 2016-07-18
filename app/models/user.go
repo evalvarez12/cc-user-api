@@ -43,6 +43,13 @@ type Email struct {
 	Email string `json:"email"`
 }
 
+type LeadersList struct {
+	FirstName       string         `json:"first_name" db:"first_name"`
+	LastName        string         `json:"last_name" db:"last_name"`
+	Location				types.JSONText `json:"location" db:"location"`
+	TotalFootprint	float64				 `json:"total_footprint" db:"total_footprint"`
+}
+
 func (user *User) Validate(v *revel.Validation) {
 	v.Required(user.FirstName)
 	v.MinSize(user.FirstName, 4)

@@ -59,6 +59,23 @@ func (c Users) LogoutAll() revel.Result {
 	return c.OK()
 }
 
+func (c Users) ListLeaders() revel.Result {
+
+	offset := "10"
+	if len(c.Params.Values) != 0 {
+		if value, ok := c.Params.Values["offset"]; ok {
+			offset = value[0]
+		}
+	}
+
+	leaders, err := ds.ListLeaders(offset)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	return c.Data(leaders)
+}
+
 func (c Users) Add() revel.Result {
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
