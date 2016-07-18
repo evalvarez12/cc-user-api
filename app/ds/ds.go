@@ -19,8 +19,8 @@ var (
 )
 
 func init() {
-	log.Println("DB ADDRESS: ", os.Getenv("CC_DBADDRESS"))
-	host := os.Getenv("CC_DBADDRESS")
+	log.Println("DB ADDRESS: ", os.Getenv("POSTGRES_PORT_5432_TCP_ADDR"))
+	host := os.Getenv("POSTGRES_PORT_5432_TCP_ADDR")
 	settings := postgresql.ConnectionURL{
 		Database: os.Getenv("CC_DBNAME"),
 		Host:     host,
