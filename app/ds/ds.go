@@ -19,11 +19,9 @@ var (
 )
 
 func init() {
-	log.Println("DB ADDRESS: ", os.Getenv("POSTGRES_PORT_5432_TCP_ADDR"))
-	host := os.Getenv("POSTGRES_PORT_5432_TCP_ADDR")
 	settings := postgresql.ConnectionURL{
 		Database: os.Getenv("CC_DBNAME"),
-		Host:     host,
+		Host:     "postgres",
 		User:     os.Getenv("CC_DBUSER"),
 		Password: os.Getenv("CC_DBPASS"),
 	}
@@ -32,12 +30,7 @@ func init() {
 	var err error
 	sess, err = postgresql.Open(settings)
 	if err != nil {
-		log.Printf("Session Open Error: ", err)
-		settings.Host = os.Getenv("POSTGRES_PORT_5432_TCP_ADDR")
-		sess, err = postgresql.Open(settings)
-		if err != nil {
-			log.Fatal("Session Open Error: ", err)
-		}
+		log.Fatal("Session Open Error: ", err)
 	}
 
 	userSource = sess.Collection("users")
