@@ -254,8 +254,9 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 	return
 }
 
-func ListLeaders(offset string) (leadersList []models.LeadersList, err error) {
-	q := userSource.Find().Select("first_name", "last_name", "total_footprint", "location").Where("public IS TRUE AND total_footprint IS NOT NULL")
+func ListLeaders(limit int, offset int) (leadersList []models.Leader, err error) {
+
+	q := userSource.Find().Select("first_name", "last_name", "total_footprint", "location").Where("public IS TRUE AND total_footprint IS NOT NULL").OrderBy("total_footprint").Limit(limit).Offset(offset)
 
 	err = q.All(&leadersList)
 	if err != nil {

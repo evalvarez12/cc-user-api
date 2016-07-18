@@ -61,14 +61,26 @@ func (c Users) LogoutAll() revel.Result {
 
 func (c Users) ListLeaders() revel.Result {
 
-	offset := "10"
+	limit, offset := 10, 0
+
 	if len(c.Params.Values) != 0 {
+		if value, ok := c.Params.Values["limit"]; ok {
+			v, err := strconv.ParseInt(value[0], 10, 32)
+			if err != nil {
+				return c.Error(err)
+			}
+			limit = int(v)
+		}
 		if value, ok := c.Params.Values["offset"]; ok {
-			offset = value[0]
+			v, err := strconv.ParseInt(value[0], 10, 32)
+			if err != nil {
+				return c.Error(err)
+			}
+			offset = int(v)
 		}
 	}
 
-	leaders, err := ds.ListLeaders(offset)
+	leaders, err := ds.ListLeaders(limit, offset)
 	if err != nil {
 		return c.Error(err)
 	}

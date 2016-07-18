@@ -43,7 +43,7 @@ type Email struct {
 	Email string `json:"email"`
 }
 
-type LeadersList struct {
+type Leader struct {
 	FirstName       string         `json:"first_name" db:"first_name"`
 	LastName        string         `json:"last_name" db:"last_name"`
 	Location				types.JSONText `json:"location" db:"location"`
