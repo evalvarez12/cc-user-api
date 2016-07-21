@@ -21,7 +21,7 @@ type User struct {
 	Answers         types.JSONText `json:"answers" db:"answers"`
 	Public					bool				 	 `json:"public" db:"public"`
 	Location				types.JSONText `json:"location" db:"location"`
-	TotalFootprint	float64				 `json:"" db:"total_footprint"`
+	TotalFootprint	types.JSONText `json:"total_footprint" db:"total_footprint"`
 	ResetHash       []byte         `json:"-" db:"reset_hash"`
 	ResetExpiration time.Time      `json:"-" db:"reset_expiration"`
 }
@@ -39,6 +39,10 @@ type Location struct {
 	Location types.JSONText `json:"location"`
 }
 
+type TotalFootprint struct {
+	TotalFootprint types.JSONText `json:"total_footprint"`
+}
+
 type Email struct {
 	Email string `json:"email"`
 }
@@ -47,7 +51,7 @@ type Leader struct {
 	FirstName       string         `json:"first_name" db:"first_name"`
 	LastName        string         `json:"last_name" db:"last_name"`
 	Location				types.JSONText `json:"location" db:"location"`
-	TotalFootprint	float64				 `json:"total_footprint" db:"total_footprint"`
+	TotalFootprint	types.JSONText `json:"total_footprint" db:"total_footprint"`
 }
 
 func (user *User) Validate(v *revel.Validation) {
@@ -113,6 +117,9 @@ func (u *User) MarshalDB() {
 	}
 	if u.Location == nil {
 		u.Location = types.JSONText("{}")
+	}
+	if u.TotalFootprint == nil {
+		u.TotalFootprint = types.JSONText("{}")
 	}
 }
 

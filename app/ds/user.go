@@ -172,13 +172,13 @@ func UpdateAnswers(userID uint, answers models.Answers) (err error) {
 	return
 }
 
-func UpdateTotalFootprint(userID uint, totalFootprint float64) (err error) {
+func UpdateTotalFootprint(userID uint, footprint models.TotalFootprint) (err error) {
 	var user models.User
 	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
 	if err != nil {
 		return
 	}
-	user.TotalFootprint = totalFootprint
+	user.TotalFootprint = footprint.TotalFootprint
 	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
 }
@@ -256,7 +256,10 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 
 func ListLeaders(limit int, offset int) (leadersList []models.Leader, err error) {
 
-	q := userSource.Find().Select("first_name", "last_name", "total_footprint", "location").Where("public IS TRUE AND total_footprint IS NOT NULL").OrderBy("total_footprint").Limit(limit).Offset(offset)
+	// q := userSource.Find().Select("first_name", "last_name", "total_footprint", "location").Where("public IS TRUE AND total_footprint IS NOT NULL").OrderBy("total_footprint").Limit(limit).Offset(offset)
+
+	// @ToDo: How to OrderBy JSONText key
+	q := userSource.Find().Select("first_name", "last_name", "total_footprint", "location").Where("public IS TRUE AND total_footprint IS NOT NULL").Limit(limit).Offset(offset)
 
 	err = q.All(&leadersList)
 	if err != nil {

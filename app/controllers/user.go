@@ -153,13 +153,28 @@ func (c Users) UpdateAnswers() revel.Result {
 		return c.Error(err)
 	}
 
-	grandTotal := answersMap["answers"].(map[string]interface{})["result_grand_total"].(string)
-	grandTotalFloat, err := strconv.ParseFloat(grandTotal, 64)
-	if err != nil {
-		return c.Error(err)
+	footprintsMap := map[string]interface{}{
+		"result_food_total": 0,
+		"result_housing_total": 0,
+		"result_services_total": 0,
+		"result_goods_total": 0,
+		"result_transport_total": 0,
+		"result_grand_total": 0,
 	}
 
-	err = ds.UpdateTotalFootprint(userID, grandTotalFloat)
+	for name, _ := range footprintsMap {
+	  amount := answersMap["answers"].(map[string]interface{})[name].(string)
+	  amountFloat, err := strconv.ParseFloat(amount, 64)
+	  if err != nil {
+	    return c.Error(err)
+	  }
+	  footprintsMap[name] = amountFloat
+	}
+
+	var footprint models.TotalFootprint
+	footprint.TotalFootprint, err = json.Marshal(footprintsMap)
+
+	err = ds.UpdateTotalFootprint(userID, footprint)
 	if err != nil {
 		return c.Error(err)
 	}
