@@ -20,4 +20,13 @@ CREATE TABLE "users" (
     "reset_expiration" TIMESTAMP
 );
 
-CREATE INDEX leaders_public_footprint_index ON users(first_name, last_name, total_footprint, location) WHERE public IS TRUE AND total_footprint IS NOT NULL;
+CREATE INDEX leaders_public_footprint_index
+ON users(first_name, last_name, total_footprint, location)
+WHERE public IS TRUE AND (total_footprint->'result_grand_total') IS NOT NULL
+ORDER BY total_footprint->'result_grand_total' ASC;
+
+CREATE VIEW leaders_public_footprint AS
+SELECT first_name, last_name, total_footprint, location
+FROM users
+WHERE public IS TRUE AND (total_footprint->'result_grand_total') IS NOT NULL
+ORDER BY total_footprint->'result_grand_total' ASC;

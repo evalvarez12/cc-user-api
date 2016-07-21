@@ -10,12 +10,8 @@ import (
 var sess postgresql.Database
 
 var (
-	chargeSource   db.Collection
 	userSource     db.Collection
-	categorySource db.Collection
-	accountSource  db.Collection
-	sessionSource  db.Collection
-	plannedSource  db.Collection
+	leadersSource  db.Collection
 )
 
 func init() {
@@ -34,4 +30,5 @@ func init() {
 	}
 
 	userSource = sess.Collection("users")
+	leadersSource = sess.Collection("leaders_public_footprint")
 }
