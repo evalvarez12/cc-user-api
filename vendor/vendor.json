@@ -63,6 +63,12 @@
 			"revisionTime": "2016-05-10T22:24:21Z"
 		},
 		{
+			"checksumSHA1": "Dz6YPuvQ7AbRoNoc0t1pW4ABF14=",
+			"path": "github.com/mitchellh/mapstructure",
+			"revision": "21a35fb16463dfb7c8eee579c65d995d95e64d1e",
+			"revisionTime": "2016-07-13T01:02:19Z"
+		},
+		{
 			"checksumSHA1": "ClQZhBGCpYykPyu8HTE9u5P2rS0=",
 			"path": "github.com/revel/config",
 			"revision": "75f5ee659b5338d1ce823536fe9b9e50b4de01b4",
