@@ -5,17 +5,17 @@
 DROP TABLE IF EXISTS "users";
 
 CREATE TABLE "users" (
-    "user_id"         SERIAL PRIMARY KEY,
-    "email"           VARCHAR(80) UNIQUE,
-    "first_name"      VARCHAR(80),
-    "last_name"       VARCHAR(80),
-    "hash"            BYTEA,
-    "salt"            BYTEA,
-    "valid_jti"       BYTEA,
-    "answers"         JSONB,
-    "public"          BOOLEAN,
-    "location"        JSONB,
-    "total_footprint" REAL,
+    "user_id"          SERIAL PRIMARY KEY,
+    "email"            VARCHAR(80) UNIQUE,
+    "first_name"       VARCHAR(80),
+    "last_name"        VARCHAR(80),
+    "hash"             BYTEA,
+    "salt"             BYTEA,
+    "valid_jti"        BYTEA,
+    "answers"          JSONB,
+    "public"           BOOLEAN,
+    "location"         JSONB,
+    "total_footprint"  JSONB,
     "reset_hash"       BYTEA,
     "reset_expiration" TIMESTAMP
 );

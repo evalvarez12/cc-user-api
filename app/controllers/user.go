@@ -59,6 +59,35 @@ func (c Users) LogoutAll() revel.Result {
 	return c.OK()
 }
 
+func (c Users) ListLeaders() revel.Result {
+
+	limit, offset := 10, 0
+
+	if len(c.Params.Values) != 0 {
+		if value, ok := c.Params.Values["limit"]; ok {
+			v, err := strconv.ParseInt(value[0], 10, 32)
+			if err != nil {
+				return c.Error(err)
+			}
+			limit = int(v)
+		}
+		if value, ok := c.Params.Values["offset"]; ok {
+			v, err := strconv.ParseInt(value[0], 10, 32)
+			if err != nil {
+				return c.Error(err)
+			}
+			offset = int(v)
+		}
+	}
+
+	leaders, err := ds.ListLeaders(limit, offset)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	return c.Data(leaders)
+}
+
 func (c Users) Add() revel.Result {
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -124,13 +153,28 @@ func (c Users) UpdateAnswers() revel.Result {
 		return c.Error(err)
 	}
 
-	grandTotal := answersMap["answers"].(map[string]interface{})["result_grand_total"].(string)
-	grandTotalFloat, err := strconv.ParseFloat(grandTotal, 64)
-	if err != nil {
-		return c.Error(err)
+	footprintsMap := map[string]interface{}{
+		"result_food_total": 0,
+		"result_housing_total": 0,
+		"result_services_total": 0,
+		"result_goods_total": 0,
+		"result_transport_total": 0,
+		"result_grand_total": 0,
 	}
 
-	err = ds.UpdateTotalFootprint(userID, grandTotalFloat)
+	for name, _ := range footprintsMap {
+	  amount := answersMap["answers"].(map[string]interface{})[name].(string)
+	  amountFloat, err := strconv.ParseFloat(amount, 64)
+	  if err != nil {
+	    return c.Error(err)
+	  }
+	  footprintsMap[name] = amountFloat
+	}
+
+	var footprint models.TotalFootprint
+	footprint.TotalFootprint, err = json.Marshal(footprintsMap)
+
+	err = ds.UpdateTotalFootprint(userID, footprint)
 	if err != nil {
 		return c.Error(err)
 	}

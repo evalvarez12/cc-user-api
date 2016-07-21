@@ -24,6 +24,8 @@ database-shell:
 	docker exec -it postgres psql -Ucc cc_users
 
 api:
+	(docker stop user_api || exit 0) && \
+  (docker rm user_api || exit 0) && \
 	docker run \
 		-d \
 		-p 0.0.0.0:8082:8082 \
