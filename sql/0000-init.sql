@@ -2,6 +2,8 @@
 
 -- cat sql/0000-init.sql | PGPASSWORD=pass psql -h localhost -Ucc cc_users
 
+DROP VIEW IF EXISTS "leaders_public_footprint";
+DROP INDEX IF EXISTS "leaders_public_footprint_index";
 DROP TABLE IF EXISTS "users";
 
 CREATE TABLE "users" (
@@ -22,8 +24,7 @@ CREATE TABLE "users" (
 
 CREATE INDEX leaders_public_footprint_index
 ON users(first_name, last_name, total_footprint, location)
-WHERE public IS TRUE AND (total_footprint->'result_grand_total') IS NOT NULL
-ORDER BY total_footprint->'result_grand_total' ASC;
+WHERE public IS TRUE AND (total_footprint->'result_grand_total') IS NOT NULL;
 
 CREATE VIEW leaders_public_footprint AS
 SELECT first_name, last_name, total_footprint, location

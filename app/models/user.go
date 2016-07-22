@@ -47,6 +47,11 @@ type Email struct {
 	Email string `json:"email"`
 }
 
+type PaginatedLeaders struct {
+	TotalCount 	uint64  `json:"total_count"`
+	List				[]Leader `json:"list"`
+}
+
 type Leader struct {
 	FirstName       string         `json:"first_name" db:"first_name"`
 	LastName        string         `json:"last_name" db:"last_name"`

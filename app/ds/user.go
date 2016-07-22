@@ -9,6 +9,7 @@ import (
 	"time"
 	"upper.io/db.v2"
 	"github.com/lib/pq"
+	// "log"
 )
 
 func GetSession(token string) (userID uint, jti string, err error) {
@@ -255,10 +256,17 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 	return
 }
 
-func ListLeaders(limit int, offset int) (leadersList []models.Leader, err error) {
+func ListLeaders(limit int, offset int) (leaders models.PaginatedLeaders, err error) {
 
-	q := leadersSource.Find().Limit(limit).Offset(offset)
-	err = q.All(&leadersList)
+	q := leadersSource.Find()
+	count, err := q.Count()
+	if err != nil {
+		return
+	}
+	leaders.TotalCount = count
+
+	list := q.Limit(limit).Offset(offset)
+	err = list.All(&leaders.List)
 	if err != nil {
 		return
 	}
