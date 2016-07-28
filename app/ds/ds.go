@@ -10,8 +10,13 @@ import (
 var sess postgresql.Database
 
 var (
-	userSource     db.Collection
-	leadersSource  db.Collection
+	userSource     					db.Collection
+	leadersSource 					db.Collection
+	leadersFoodSource  			db.Collection
+	leadersHousingSource  	db.Collection
+	leadersShoppingSource  	db.Collection
+	leadersTransportSource  db.Collection
+	query										db.Result
 )
 
 func init() {
@@ -31,4 +36,8 @@ func init() {
 
 	userSource = sess.Collection("users")
 	leadersSource = sess.Collection("leaders_public_footprint")
+	leadersFoodSource = sess.Collection("leaders_public_food_footprint")
+	leadersHousingSource = sess.Collection("leaders_public_housing_footprint")
+	leadersShoppingSource = sess.Collection("leaders_public_shopping_footprint")
+	leadersTransportSource = sess.Collection("leaders_public_transport_footprint")
 }
