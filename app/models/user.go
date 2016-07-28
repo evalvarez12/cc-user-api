@@ -20,7 +20,9 @@ type User struct {
 	ValidJTI        []byte         `json:"-" db:"valid_jti"`
 	Answers         types.JSONText `json:"answers" db:"answers"`
 	Public					bool				 	 `json:"public" db:"public"`
-	Location				types.JSONText `json:"location" db:"location"`
+	City						string 				 `json:"city" db:"city"`
+	State						string 				 `json:"state" db:"state"`
+	County					string 				 `json:"county" db:"county"`
 	TotalFootprint	types.JSONText `json:"total_footprint" db:"total_footprint"`
 	ResetHash       []byte         `json:"-" db:"reset_hash"`
 	ResetExpiration time.Time      `json:"-" db:"reset_expiration"`
@@ -36,7 +38,9 @@ type Answers struct {
 }
 
 type Location struct {
-	Location types.JSONText `json:"location"`
+	City						string 				 `json:"city" db:"city"`
+	State						string 				 `json:"state" db:"state"`
+	County					string 				 `json:"county" db:"county"`
 }
 
 type TotalFootprint struct {
@@ -47,11 +51,18 @@ type Email struct {
 	Email string `json:"email"`
 }
 
+type PaginatedLeaders struct {
+	TotalCount 	uint64  	`json:"total_count"`
+	List				[]Leader 	`json:"list"`
+}
+
 type Leader struct {
-	FirstName       string         `json:"first_name" db:"first_name"`
-	LastName        string         `json:"last_name" db:"last_name"`
-	Location				types.JSONText `json:"location" db:"location"`
-	TotalFootprint	types.JSONText `json:"total_footprint" db:"total_footprint"`
+	FirstName       	string         `json:"first_name" db:"first_name"`
+	LastName        	string         `json:"last_name" db:"last_name"`
+	City							string 				 `json:"city" db:"city"`
+	State							string 				 `json:"state" db:"state"`
+	County						string 				 `json:"county" db:"county"`
+	CategoryFootprint	types.JSONText `json:"footprint" db:"footprint"`
 }
 
 func (user *User) Validate(v *revel.Validation) {
@@ -114,9 +125,6 @@ func (u *User) MarshalDB() {
 	u.ValidJTI = buffer.Bytes()
 	if u.Answers == nil {
 		u.Answers = types.JSONText("{}")
-	}
-	if u.Location == nil {
-		u.Location = types.JSONText("{}")
 	}
 	if u.TotalFootprint == nil {
 		u.TotalFootprint = types.JSONText("{}")

@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"strconv"
+	"math"
 )
 
 type Users struct {
@@ -61,7 +62,7 @@ func (c Users) LogoutAll() revel.Result {
 
 func (c Users) ListLeaders() revel.Result {
 
-	limit, offset := 10, 0
+	limit, offset, category, city, state := 10, 0, "", "", ""
 
 	if len(c.Params.Values) != 0 {
 		if value, ok := c.Params.Values["limit"]; ok {
@@ -78,14 +79,33 @@ func (c Users) ListLeaders() revel.Result {
 			}
 			offset = int(v)
 		}
+		if value, ok := c.Params.Values["category"]; ok {
+			category = value[0]
+		}
+		if value, ok := c.Params.Values["city"]; ok {
+			city = value[0]
+		}
+		if value, ok := c.Params.Values["state"]; ok {
+			state = value[0]
+		}
 	}
 
-	leaders, err := ds.ListLeaders(limit, offset)
+	leaders, err := ds.ListLeaders(limit, offset, category, city, state)
 	if err != nil {
 		return c.Error(err)
 	}
 
 	return c.Data(leaders)
+}
+
+func (c Users) ListLocations() revel.Result {
+
+	locations, err := ds.ListLocations()
+	if err != nil {
+		return c.Error(err)
+	}
+
+	return c.Data(locations)
 }
 
 func (c Users) Add() revel.Result {
@@ -156,19 +176,17 @@ func (c Users) UpdateAnswers() revel.Result {
 	footprintsMap := map[string]interface{}{
 		"result_food_total": 0,
 		"result_housing_total": 0,
-		"result_services_total": 0,
-		"result_goods_total": 0,
+		"result_shopping_total": 0,
 		"result_transport_total": 0,
 		"result_grand_total": 0,
 	}
 
 	for name, _ := range footprintsMap {
-	  amount := answersMap["answers"].(map[string]interface{})[name].(string)
-	  amountFloat, err := strconv.ParseFloat(amount, 64)
-	  if err != nil {
-	    return c.Error(err)
-	  }
-	  footprintsMap[name] = amountFloat
+		if name == "result_shopping_total" {
+			footprintsMap[name] = FootprintAnswerToUint("result_services_total", answersMap) + FootprintAnswerToUint("result_goods_total", answersMap)
+		} else {
+		  footprintsMap[name] = FootprintAnswerToUint(name, answersMap)
+		}
 	}
 
 	var footprint models.TotalFootprint
@@ -186,6 +204,16 @@ func (c Users) UpdateAnswers() revel.Result {
 	return c.OK()
 }
 
+func FootprintAnswerToUint(name string, answersMap map[string]interface{}) (footprintAmount uint) {
+	amount := answersMap["answers"].(map[string]interface{})[name].(string)
+	amountFloat, err := strconv.ParseFloat(amount, 64)
+	if err != nil {
+		return
+	}
+	return uint(math.Floor(amountFloat + .5))
+}
+
+
 func (c Users) SetLocation() revel.Result {
 	userID, _, err := c.GetSession()
 	if err != nil {
@@ -196,6 +224,7 @@ func (c Users) SetLocation() revel.Result {
 	if err != nil {
 		return c.Error(err)
 	}
+
 	var bodyLocation models.Location
 	err = json.Unmarshal(body, &bodyLocation)
 	if err != nil {

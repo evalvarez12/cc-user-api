@@ -190,9 +190,9 @@ func SetLocation(userID uint, location models.Location) (err error) {
 	if err != nil {
 		return
 	}
-	// user.UnmarshalDB()
-	user.Location = location.Location
-	// user.MarshalDB()
+	user.City = location.City
+	user.State = location.State
+	user.County = location.County
 	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
 	return
 }
@@ -255,14 +255,88 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 	return
 }
 
-func ListLeaders(limit int, offset int) (leadersList []models.Leader, err error) {
+func ListLeaders(limit int, offset int, category string, city string, state string) (leaders models.PaginatedLeaders, err error) {
 
-	q := leadersSource.Find().Limit(limit).Offset(offset)
-	err = q.All(&leadersList)
+	switch {
+	case category=="food":
+		if len(city) == 0 && len(state) == 0 {
+			query = leadersFoodSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+			query = leadersFoodSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+			query = leadersFoodSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+			query = leadersFoodSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	case category=="housing":
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersHousingSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersHousingSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersHousingSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersHousingSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	case category=="shopping":
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersShoppingSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersShoppingSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersShoppingSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersShoppingSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	case category=="transport":
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersTransportSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersTransportSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersTransportSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersTransportSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	default:
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	}
+
+	count, err := query.Count()
+	if err != nil {
+		return
+	}
+	leaders.TotalCount = count
+
+	list := query.Limit(limit).Offset(offset)
+	err = list.All(&leaders.List)
 	if err != nil {
 		return
 	}
 
+	return
+}
+
+func ListLocations() (locations []models.Location, err error) {
+
+	q := leadersSource.Find().Select("city", "state", "county").Group("city", "state", "county")
+	err = q.All(&locations)
+	if err != nil {
+		return
+	}
 	return
 }
 
