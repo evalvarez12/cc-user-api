@@ -3,11 +3,12 @@ package ds
 import (
 	"crypto/rand"
 	"errors"
-	"github.com/evalvarez12/cc-user-api/app/models"
+	"github.com/arbolista-dev/cc-user-api/app/models"
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"time"
 	"upper.io/db.v2"
+	"github.com/lib/pq"
 )
 
 func GetSession(token string) (userID uint, jti string, err error) {
@@ -26,7 +27,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 	user.UnmarshalDB()
 
 	if time.Now().Unix() > int64(claims["exp"].(float64)) {
-		err = errors.New("Session expired")
+		err = errors.New(`{"session": "expired"}`)
 		user.RemoveJTI(claims["jti"].(string))
 		user.MarshalDB()
 		_ = userSource.Find(db.Cond{"user_id": userID}).Update(user)
@@ -34,7 +35,7 @@ func GetSession(token string) (userID uint, jti string, err error) {
 	}
 
 	if !user.ContainsJTI(claims["jti"].(string)) {
-		err = errors.New("Non existant session")
+		err = errors.New(`{"session": "non-existent"}`)
 		return
 	}
 
@@ -48,6 +49,13 @@ func Add(user models.User) (login map[string]interface{}, err error) {
 	user.MarshalDB()
 	temp, err := userSource.Insert(user)
 	if err != nil {
+		pqErr := err.(*pq.Error)
+		if pqErr != nil {
+			if pqErr.Code == "23505" {
+				err = errors.New(`{"email": "non-unique"}`)
+				return
+			}
+		}
 		return
 	}
 	userID := uint(temp.(int64))
@@ -86,14 +94,14 @@ func Login(logRequest models.UserLogin) (login map[string]interface{}, err error
 	var user models.User
 	err = userSource.Find("email", logRequest.Email).One(&user)
 	if err != nil {
-		err = errors.New("Incorrect Password or UserName")
+		err = errors.New(`{"email": "non-existent"}`)
 		return
 	}
 	user.UnmarshalDB()
 
 	err = bcrypt.CompareHashAndPassword(user.Hash, append([]byte(logRequest.Password), user.Salt...))
 	if err != nil {
-		err = errors.New("Incorrect Password or UserName")
+		err = errors.New(`{"password": "incorrect"}`)
 		return
 	}
 	token, err := newToken(user.UserID)
@@ -164,6 +172,31 @@ func UpdateAnswers(userID uint, answers models.Answers) (err error) {
 	return
 }
 
+
+func UpdateTotalFootprint(userID uint, footprint models.TotalFootprint) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	if err != nil {
+		return
+	}
+	user.TotalFootprint = footprint.TotalFootprint
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
+	return
+}
+
+func SetLocation(userID uint, location models.Location) (err error) {
+	var user models.User
+	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
+	if err != nil {
+		return
+	}
+	user.City = location.City
+	user.State = location.State
+	user.County = location.County
+	err = userSource.Find(db.Cond{"user_id": userID}).Update(user)
+	return
+}
+
 func Update(userID uint, userNew models.User) (err error) {
 	var user models.User
 	err = userSource.Find(db.Cond{"user_id": userID}).One(&user)
@@ -197,13 +230,13 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 	if user.ResetExpiration.After(time.Now()) {
 		user.ResetHash = []byte{}
 		user.ResetExpiration = time.Time{}
-		err = errors.New("Password reset expired")
+		err = errors.New(`{"password-reset": "expired"}`)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword(user.ResetHash, []byte(token))
 	if err != nil {
-		err = errors.New("Corrupt reset token")
+		err = errors.New(`{"reset-token": "corrupt"}`)
 		return err
 	}
 
@@ -216,6 +249,91 @@ func PassResetConfirm(userID uint, token, password string) (err error) {
 
 	user.MarshalDB()
 	err = userSource.Find(db.Cond{"user_id": user.UserID}).Update(user)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func ListLeaders(limit int, offset int, category string, city string, state string) (leaders models.PaginatedLeaders, err error) {
+
+	switch {
+	case category=="food":
+		if len(city) == 0 && len(state) == 0 {
+			query = leadersFoodSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+			query = leadersFoodSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+			query = leadersFoodSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+			query = leadersFoodSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	case category=="housing":
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersHousingSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersHousingSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersHousingSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersHousingSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	case category=="shopping":
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersShoppingSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersShoppingSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersShoppingSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersShoppingSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	case category=="transport":
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersTransportSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersTransportSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersTransportSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersTransportSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	default:
+		if len(city) == 0 && len(state) == 0 {
+		  query = leadersSource.Find().OrderBy("footprint")
+		} else if len(city) > 0 && len(state) > 0 {
+		  query = leadersSource.Find(db.Cond{"city": city},db.Cond{"state": state}).OrderBy("footprint")
+		} else if len(city) > 0  && len(state) == 0 {
+		  query = leadersSource.Find(db.Cond{"city": city}).OrderBy("footprint")
+		} else if len(city) == 0 && len(state) > 0{
+		  query = leadersSource.Find(db.Cond{"state": state}).OrderBy("footprint")
+		}
+		break
+	}
+
+	count, err := query.Count()
+	if err != nil {
+		return
+	}
+	leaders.TotalCount = count
+
+	list := query.Limit(limit).Offset(offset)
+	err = list.All(&leaders.List)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func ListLocations() (locations []models.Location, err error) {
+
+	q := leadersSource.Find().Select("city", "state", "county").Group("city", "state", "county")
+	err = q.All(&locations)
 	if err != nil {
 		return
 	}

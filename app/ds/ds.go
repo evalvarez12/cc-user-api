@@ -10,20 +10,19 @@ import (
 var sess postgresql.Database
 
 var (
-	chargeSource   db.Collection
-	userSource     db.Collection
-	categorySource db.Collection
-	accountSource  db.Collection
-	sessionSource  db.Collection
-	plannedSource  db.Collection
+	userSource     					db.Collection
+	leadersSource 					db.Collection
+	leadersFoodSource  			db.Collection
+	leadersHousingSource  	db.Collection
+	leadersShoppingSource  	db.Collection
+	leadersTransportSource  db.Collection
+	query										db.Result
 )
 
 func init() {
-	log.Println("DB ADDRESS: ", os.Getenv("CC_DBADDRESS"))
-	host := os.Getenv("CC_DBADDRESS")
 	settings := postgresql.ConnectionURL{
 		Database: os.Getenv("CC_DBNAME"),
-		Host:     host,
+		Host:     "postgres",
 		User:     os.Getenv("CC_DBUSER"),
 		Password: os.Getenv("CC_DBPASS"),
 	}
@@ -32,13 +31,13 @@ func init() {
 	var err error
 	sess, err = postgresql.Open(settings)
 	if err != nil {
-		log.Printf("Session Open Error: ", err)
-		settings.Host = os.Getenv("POSTGRES_PORT_5432_TCP_ADDR")
-		sess, err = postgresql.Open(settings)
-		if err != nil {
-			log.Fatal("Session Open Error: ", err)
-		}
+		log.Fatal("Session Open Error: ", err)
 	}
 
 	userSource = sess.Collection("users")
+	leadersSource = sess.Collection("leaders_public_footprint")
+	leadersFoodSource = sess.Collection("leaders_public_food_footprint")
+	leadersHousingSource = sess.Collection("leaders_public_housing_footprint")
+	leadersShoppingSource = sess.Collection("leaders_public_shopping_footprint")
+	leadersTransportSource = sess.Collection("leaders_public_transport_footprint")
 }

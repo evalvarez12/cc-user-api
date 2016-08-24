@@ -4,7 +4,8 @@ var userBody = `{
   "first_name": "Juan",
   "last_name" : "Perez",
   "email" : "juanp@test.testy",
-  "password": "juanito"
+  "password": "juanito",
+  "public": true
 }`
 
 var userBody_update = `{
@@ -29,4 +30,8 @@ var loginBody_badPassword = `{
 
 var answers_update = `{
   "answers" : {"city" : "GDL", "money" : "none", "CO2" : "lots"}
+}`
+
+var location_set = `{
+  "location" : {"city" : "GDL", "money" : "none", "CO2" : "lots"}
 }`

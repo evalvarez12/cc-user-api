@@ -1,12 +1,20 @@
 # CC-USERS-API
 ## Setup
+
+Copy and configure your environment variables:
+
+```sh
+cp .env.example .env
+export $(cat .env | xargs)
+```
+
 Run in this order:
 ```
 make images
 
-make database
+make create-database
 
-make api
+make create-api
 ```
 
 *Address is 127.0.0.1:8082*
@@ -54,7 +62,7 @@ PUT     /user/answers      // Update user answers
 ### Adding a user
 Use:
 ```
-POST     /user              
+POST     /user
 ```
 Body:
 ```
@@ -77,7 +85,7 @@ Validation on the fields:
 ### Logging in
 Use:
 ```
-POST    /user/login     
+POST    /user/login
 ```
 Body:
 ```

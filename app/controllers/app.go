@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/evalvarez12/cc-user-api/app/ds"
+	"github.com/arbolista-dev/cc-user-api/app/ds"
 	"github.com/revel/revel"
 )
 
