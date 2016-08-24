@@ -1,7 +1,6 @@
 #!/bin/bash
 
-
-# Execute server test
+# run DB migrations
 # cd go/src/github.com/arbolista-dev/cc-user-api &&\
 #     goose up
 

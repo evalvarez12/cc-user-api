@@ -1,7 +1,10 @@
 #--------- RUN ON HOST -----------------
 # Get docker images
 reset-database:
-	cat sql/0000-init.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
+	cat sql/0000-reset.sql sql/0001-init.sql sql/0002*.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
+
+migrate-database:
+	cat sql/0001*.sql sql/0002*.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
 
 images:
 	docker pull postgres:9.4.5 && \
@@ -17,8 +20,8 @@ database:
 		--name postgres postgres:9.4.5 && \
 	sleep 10 && \
 	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE ROLE $(CC_DBUSER) PASSWORD '$(CC_DBPASS)' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN" &&\
-	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE DATABASE $(CC_DBNAME)"
-	cat sql/0000-init.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
+	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE DATABASE $(CC_DBNAME)" &&\
+	cat sql/0000-reset.sql sql/0001-init.sql sql/0002*.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
 
 database-shell:
 	docker exec -it postgres psql -Ucc cc_users
