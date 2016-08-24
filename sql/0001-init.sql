@@ -1,6 +1,6 @@
 -- cat sql/0001-init.sql | PGPASSWORD=pass psql -h localhost -Ucc cc_users
 
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
     "user_id"          SERIAL PRIMARY KEY,
     "email"            VARCHAR(80) UNIQUE,
     "first_name"        VARCHAR(80),

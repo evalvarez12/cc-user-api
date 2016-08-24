@@ -1,17 +1,12 @@
 #--------- RUN ON HOST -----------------
-# Get docker images
-reset-database:
-	cat sql/0000-reset.sql sql/0001-init.sql sql/0002*.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
-
-migrate-database:
-	cat sql/0001*.sql sql/0002*.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
-
+## Initial setup commands
+# Create images for containers
 images:
 	docker pull postgres:9.4.5 && \
 	docker build -t cc:user_api .
 
 # Create DB container
-database:
+create-database:
 	(docker stop postgres || exit 0) && \
 	(docker rm postgres || exit 0) && \
 	docker run \
@@ -21,12 +16,10 @@ database:
 	sleep 10 && \
 	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE ROLE $(CC_DBUSER) PASSWORD '$(CC_DBPASS)' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN" &&\
 	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE DATABASE $(CC_DBNAME)" &&\
-	cat sql/0000-reset.sql sql/0001-init.sql sql/0002*.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
+	sql/0001-init.sql sql/0002-leadersMigration.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
 
-database-shell:
-	docker exec -it postgres psql -Ucc cc_users
-
-api:
+# Create API container
+create-api:
 	(docker stop user_api || exit 0) && \
   (docker rm user_api || exit 0) && \
 	docker run \
@@ -37,5 +30,19 @@ api:
 		--env-file .env\
 		cc:user_api
 
+## Tools
+# Access pg shell
+database-shell:
+	docker exec -it postgres psql -Ucc cc_users
+
+# Clear database and run migrations
+reset-database:
+	cat sql/0000-reset.sql sql/0001-init.sql sql/0002-leadersMigration.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
+
+# Run DB migrations
+migrate-database:
+	cat sql/0001-init.sql sql/0002-leadersMigration.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
+
+# Update API with latest changes
 update-api:
 	docker cp . user_api:/go/src/github.com/arbolista-dev/cc-user-api

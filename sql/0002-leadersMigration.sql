@@ -1,12 +1,12 @@
 -- cat sql/0002-leadersMigration.sql | PGPASSWORD=pass psql -h localhost -Ucc cc_users
 
-ALTER TABLE "users" ADD COLUMN "public" BOOLEAN,
-                    ADD COLUMN "city" VARCHAR(80),
-                    ADD COLUMN "state" VARCHAR(80),
-                    ADD COLUMN "county" VARCHAR(80),
-                    ADD COLUMN "total_footprint" JSONB;
+ALTER TABLE IF EXISTS "users" ADD COLUMN "public" BOOLEAN,
+                              ADD COLUMN "city" VARCHAR(80),
+                              ADD COLUMN "state" VARCHAR(80),
+                              ADD COLUMN "county" VARCHAR(80),
+                              ADD COLUMN "total_footprint" JSONB;
 
-CREATE INDEX leaders_public_footprint_index
+CREATE INDEX CONCURRENTLY leaders_public_footprint_index
 ON users(first_name, last_name, total_footprint, city, state, county)
 WHERE public IS TRUE AND (total_footprint->'result_grand_total') IS NOT NULL;
 

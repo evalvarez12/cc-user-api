@@ -12,9 +12,9 @@ Run in this order:
 ```
 make images
 
-make database
+make create-database
 
-make api
+make create-api
 ```
 
 *Address is 127.0.0.1:8082*
