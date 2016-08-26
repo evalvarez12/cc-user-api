@@ -129,11 +129,12 @@ func (c Users) Add() revel.Result {
 		return c.Error(err)
 	}
 
-	data := map[string]string{"name": newUser.FirstName}
-	err = services.SendMail("new-user-beta", newUser.Email, data)
-	if err != nil {
-		return c.Error(err)
-	}
+	// Disable send email notification
+	// data := map[string]string{"name": newUser.FirstName}
+	// err = services.SendMail("new-user-beta", newUser.Email, data)
+	// if err != nil {
+	// 	return c.Error(err)
+	// }
 
 	return c.Data(login)
 }
