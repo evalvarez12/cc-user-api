@@ -23,6 +23,7 @@ type User struct {
 	City						string 				 `json:"city" db:"city"`
 	State						string 				 `json:"state" db:"state"`
 	County					string 				 `json:"county" db:"county"`
+	Country					string 				 `json:"country" db:"country"`
 	TotalFootprint	types.JSONText `json:"total_footprint" db:"total_footprint"`
 	ResetHash       []byte         `json:"-" db:"reset_hash"`
 	ResetExpiration time.Time      `json:"-" db:"reset_expiration"`
@@ -41,6 +42,7 @@ type Location struct {
 	City						string 				 `json:"city" db:"city"`
 	State						string 				 `json:"state" db:"state"`
 	County					string 				 `json:"county" db:"county"`
+	Country					string 				 `json:"country" db:"country"`
 }
 
 type TotalFootprint struct {
