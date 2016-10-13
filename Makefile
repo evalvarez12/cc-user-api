@@ -13,10 +13,10 @@ create-database:
 		-d \
 		-p 127.0.0.1:15432:5432 \
 		--name postgres postgres:9.4.5 && \
-	sleep 10 && \
+	sleep 15 && \
 	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE ROLE $(CC_DBUSER) PASSWORD '$(CC_DBPASS)' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN" &&\
 	docker exec postgres psql -h127.0.0.1 -p5432 -Upostgres -c "CREATE DATABASE $(CC_DBNAME)" &&\
-	sql/0001-init.sql sql/0002-leadersMigration.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
+	cat sql/0001-init.sql sql/0002-leadersMigration.sql | PGPASSWORD=$(CC_DBPASS) psql -h127.0.0.1 -p15432 -U$(CC_DBUSER) $(CC_DBNAME)
 
 # Create API container
 create-api:
