@@ -68,7 +68,7 @@ func (t *AppTest) TestB_Add_ERROR_DuplicateEmail() {
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
 	log.Println(string(t.ResponseBody))
-	testSuccess(t, false, "pq: duplicate key value violates unique constraint \"users_email_key\"")
+	testSuccess(t, false, `{"email": "non-unique"}`)
 }
 
 func (t *AppTest) TestC_Login_SUCCESS() {
@@ -92,7 +92,7 @@ func (t *AppTest) TestD_Login_ERROR_BadPassword() {
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
 	log.Println(string(t.ResponseBody))
-	testSuccess(t, false, "Incorrect Password or UserName")
+	testSuccess(t, false, `{"password": "incorrect"}`)
 }
 
 func (t *AppTest) TestD_Login_ERROR_BadEmail() {
@@ -100,7 +100,7 @@ func (t *AppTest) TestD_Login_ERROR_BadEmail() {
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
 	log.Println(string(t.ResponseBody))
-	testSuccess(t, false, "Incorrect Password or UserName")
+	testSuccess(t, false, `{"email": "non-existent"}`)
 }
 
 func (t *AppTest) TestE1_Update_SUCCESS() {
@@ -114,6 +114,15 @@ func (t *AppTest) TestE1_Update_SUCCESS() {
 
 func (t *AppTest) TestE2_UpdateAnswers_SUCCESS() {
 	req := myVERB("PUT", "/user/answers", "application/json; charset=utf-8", strings.NewReader(answers_update), token, t)
+	t.NewTestRequest(req).Send()
+	t.AssertOk()
+	t.AssertContentType("application/json; charset=utf-8")
+	log.Println(string(t.ResponseBody))
+	testSuccess(t, true, "")
+}
+
+func (t *AppTest) TestE3_SetLocation_SUCCESS() {
+	req := myVERB("PUT", "/user/location", "application/json; charset=utf-8", strings.NewReader(location_set), token, t)
 	t.NewTestRequest(req).Send()
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
@@ -136,7 +145,7 @@ func (t *AppTest) TestF_UserLogout_ERROR_NoSession() {
 	t.AssertOk()
 	t.AssertContentType("application/json; charset=utf-8")
 	log.Println(string(t.ResponseBody))
-	testSuccess(t, false, "Non existant session")
+	testSuccess(t, false, `{"session": "non-existent"}`)
 }
 
 func (t *AppTest) TestG_UserLogin_SUCCESS() {

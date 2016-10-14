@@ -1,7 +1,6 @@
+-- cat sql/0001-init.sql | PGPASSWORD=pass psql -h localhost -Ucc cc_users
 
--- +goose Up
--- SQL in section 'Up' is executed when this migration is applied
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
     "user_id"          SERIAL PRIMARY KEY,
     "email"            VARCHAR(80) UNIQUE,
     "first_name"        VARCHAR(80),
@@ -13,7 +12,3 @@ CREATE TABLE "users" (
     "reset_hash"       BYTEA,
     "reset_expiration" TIMESTAMP
 );
-
--- +goose Down
--- SQL section 'Down' is executed when this migration is rolled back
-DROP TABLE IF EXISTS "users";
